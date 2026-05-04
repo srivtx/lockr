@@ -124,7 +124,7 @@ export default function DashboardPage() {
                     milestones={escrow.milestones.map((m) => ({
                       description: m.description,
                       amount: Number(m.amount) / 1_000_000,
-                      status: m.status,
+                      status: m.status as "pending" | "funded" | "complete" | "released" | "refunded",
                     }))}
                     deadline={escrow.deadline}
                     solanaPda={escrow.solanaPda}
