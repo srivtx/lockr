@@ -7,7 +7,7 @@ export const dodoClient = new DodoPayments({
   bearerToken: process.env.DODO_API_KEY!,
   webhookKey: process.env.DODO_WEBHOOK_KEY,
   environment,
-});
+} as any);
 
 export function getDodoBaseUrl(): string {
   return environment === 'test_mode'
