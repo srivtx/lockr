@@ -6,7 +6,7 @@ skip-lint = false
 trustlock = "TrustLock1111111111111111111111111111111111"
 
 [programs.devnet]
-trustlock = "TrustLock1111111111111111111111111111111111"
+trustlock = "F6PigaZhXTPpb6ao46yr4U4gWBzv5xqKPps7szv6AGyD"
 
 [registry]
 url = "https://api.apr.dev"

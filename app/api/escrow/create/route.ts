@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
 
     const { clientEmail, milestones, deadline, freelancerWallet } = parsed.data;
 
-    // Generate unique escrow ID and seed
-    const escrowId = crypto.randomUUID();
+    // Generate unique escrow ID (32 hex chars = 32 bytes, fits Solana PDA seed limit)
+    const escrowId = crypto.randomBytes(16).toString('hex');
     const seed = new BN(Math.floor(Math.random() * 1000000));
     const freelancerPubkey = new PublicKey(freelancerWallet);
 

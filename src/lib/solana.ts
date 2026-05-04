@@ -28,7 +28,7 @@ export const connection = new Connection(
 
 // Program ID from IDL metadata
 export const TRUSTLOCK_PROGRAM_ID = new PublicKey(
-  (trustlockIdl as any).metadata?.address || 'TrustLock1111111111111111111111111111111111'
+  (trustlockIdl as any).metadata?.address || 'F6PigaZhXTPpb6ao46yr4U4gWBzv5xqKPps7szv6AGyD'
 );
 
 // USDC Devnet mint

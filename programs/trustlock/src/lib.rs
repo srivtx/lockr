@@ -9,7 +9,7 @@ use instructions::*;
 
 // Placeholder program ID — replace with deployed address
 // This is a valid 32-byte base58 pubkey starting with "TrustLock"
-declare_id!("TrustLock1111111111111111111111111111111111");
+declare_id!("F6PigaZhXTPpb6ao46yr4U4gWBzv5xqKPps7szv6AGyD");
 
 pub const USDC_DEVNET_MINT: Pubkey = Pubkey::new_from_array([
     0x3b, 0x44, 0x2c, 0xb3, 0x91, 0x21, 0x57, 0xf1,
