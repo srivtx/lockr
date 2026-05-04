@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   const webhookTimestamp = req.headers.get('webhook-timestamp') ?? '';
 
   try {
-    const unwrapped = dodoClient.webhooks.unwrap(rawBody, {
+    const unwrapped = (dodoClient as any).webhooks.unwrap(rawBody, {
       headers: {
         'webhook-id': webhookId,
         'webhook-signature': webhookSignature,
