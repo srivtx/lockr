@@ -3,8 +3,11 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { WalletMultiButton as _WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import EscrowCard from "../components/EscrowCard";
+
+// Cast to work around @types/react 18.3 JSX component type mismatch
+const WalletMultiButton = _WalletMultiButton as React.ComponentType<any>;
 
 interface Milestone {
   id: string;
