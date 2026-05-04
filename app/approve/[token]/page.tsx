@@ -68,8 +68,8 @@ export default function ApprovePage() {
       const messageBytes = new TextEncoder().encode(message);
       const keypair = deriveKeypairFromToken(token);
       const signature = nacl.sign.detached(messageBytes, keypair.secretKey);
-      const signatureBase64 = btoa(String.fromCharCode(...signature));
-      const publicKeyBase64 = btoa(String.fromCharCode(...keypair.publicKey));
+      const signatureBase64 = btoa(String.fromCharCode(...Array.from(signature)));
+      const publicKeyBase64 = btoa(String.fromCharCode(...Array.from(keypair.publicKey)));
 
       // Note: The API expects milestone_index and client_signature / client_public_key
       const res = await fetch(`/api/escrow/${data.escrowId}/approve`, {
