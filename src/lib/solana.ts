@@ -7,7 +7,7 @@ import {
   SystemProgram,
   sendAndConfirmTransaction,
 } from '@solana/web3.js';
-import { AnchorProvider, Program, Wallet, Idl, BN } from '@coral-xyz/anchor';
+import { AnchorProvider, Program, Idl, BN } from '@coral-xyz/anchor';
 import {
   getAssociatedTokenAddressSync,
   createAssociatedTokenAccountInstruction,
@@ -61,8 +61,18 @@ function getEscrowKeypair(): Keypair {
 
 function getBackendProvider(): AnchorProvider {
   const kp = getEscrowKeypair();
-  const wallet = new Wallet(kp);
-  return new AnchorProvider(connection, wallet, { commitment: 'confirmed' });
+  const wallet = {
+    publicKey: kp.publicKey,
+    signTransaction: async (tx: any) => {
+      tx.partialSign(kp);
+      return tx;
+    },
+    signAllTransactions: async (txs: any[]) => {
+      txs.forEach((tx) => tx.partialSign(kp));
+      return txs;
+    },
+  };
+  return new AnchorProvider(connection, wallet as any, { commitment: 'confirmed' });
 }
 
 function getBackendProgram(): Program {
