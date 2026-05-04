@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       customer_name,
     } = parsed.data;
 
-    const session = await dodoClient.checkoutSessions.create({
+    const session = await (dodoClient as any).checkoutSessions.create({
       product_cart: [
         {
           product_id: product_id,
