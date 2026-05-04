@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { Connection, Transaction } from "@solana/web3.js";
 import { z } from "zod";
 import PaymentLinkModal from "../../components/PaymentLinkModal";
 
@@ -26,7 +27,7 @@ function getDefaultDeadline(): string {
 
 export default function CreateEscrowPage() {
   const router = useRouter();
-  const { publicKey, connected } = useWallet();
+  const { publicKey, connected, sendTransaction } = useWallet();
 
   const [clientEmail, setClientEmail] = useState("");
   const [milestones, setMilestones] = useState([{ description: "", amount: "" }]);
@@ -59,7 +60,7 @@ export default function CreateEscrowPage() {
     e.preventDefault();
     setErrors({});
 
-    if (!publicKey) {
+    if (!publicKey || !sendTransaction) {
       setErrors({ wallet: "Please connect your wallet first." });
       return;
     }
@@ -88,7 +89,7 @@ export default function CreateEscrowPage() {
     setSubmitting(true);
 
     try {
-      // 1. Create escrow on-chain + in DB
+      // 1. Build unsigned transaction on the backend
       const createRes = await fetch("/api/escrow/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -101,9 +102,48 @@ export default function CreateEscrowPage() {
       }
 
       const createData = await createRes.json();
-      const { escrowId, solanaPda } = createData.escrow;
+      const {
+        serializedTransaction,
+        escrowId,
+        solanaPda,
+        seed,
+        totalAmount: totalAmountBase,
+        clientEmailHash,
+      } = createData;
 
-      // 2. Create Dodo checkout session
+      // 2. Deserialize and sign with wallet, then send to Solana
+      const tx = Transaction.from(Buffer.from(serializedTransaction, "base64"));
+      const connection = new Connection(
+        process.env.NEXT_PUBLIC_RPC_URL || "https://api.devnet.solana.com",
+        "confirmed"
+      );
+      const signature = await sendTransaction(tx, connection);
+      await connection.confirmTransaction(signature, "confirmed");
+
+      // 3. Save to database via confirm endpoint
+      const confirmRes = await fetch("/api/escrow/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          escrowId,
+          solanaPda,
+          freelancerWallet: publicKey.toBase58(),
+          clientEmail,
+          clientEmailHash,
+          totalAmount: totalAmountBase,
+          seed,
+          deadline: new Date(deadline).toISOString(),
+          milestones: payload.milestones,
+          signature,
+        }),
+      });
+
+      if (!confirmRes.ok) {
+        const err = await confirmRes.json();
+        throw new Error(err.error || "Failed to save escrow");
+      }
+
+      // 4. Create Dodo checkout session
       const checkoutRes = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

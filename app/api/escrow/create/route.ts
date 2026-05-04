@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { prisma } from '@/src/lib/prisma';
 import {
   buildCreateEscrowTx,
-  signAndSendTransaction,
+  connection,
   getExplorerUrl,
 } from '@/src/lib/solana';
 import { PublicKey } from '@solana/web3.js';
@@ -72,44 +72,23 @@ export async function POST(req: NextRequest) {
       freelancerPubkey
     );
 
-    const signature = await signAndSendTransaction(tx);
+    // Set fee payer to freelancer and add recent blockhash
+    tx.feePayer = freelancerPubkey;
+    tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
-    // Save to database
-    const escrow = await prisma.escrow.create({
-      data: {
-        escrowId,
-        solanaPda: pda.toBase58(),
-        freelancerWallet,
-        clientEmail,
-        clientEmailHash,
-        totalAmount: BigInt(totalAmount),
-        status: 'CREATED',
-        deadline: new Date(deadline),
-        seed: BigInt(seed.toString()),
-        fundingSignature: signature,
-        milestones: {
-          create: milestones.map((m, index) => ({
-            index,
-            description: m.description,
-            amount: BigInt(Math.round(m.amount * 1_000_000)),
-            status: 'PENDING',
-          })),
-        },
-      },
-      include: { milestones: true },
-    });
+    // Return serialized unsigned transaction for the frontend to sign with the wallet
+    const serializedTx = tx.serialize({
+      requireAllSignatures: false,
+      verifySignatures: false,
+    }).toString('base64');
 
     return NextResponse.json({
-      success: true,
-      escrow: {
-        id: escrow.id,
-        escrowId: escrow.escrowId,
-        solanaPda: escrow.solanaPda,
-        status: escrow.status,
-        milestones: escrow.milestones,
-      },
-      signature,
-      explorer: getExplorerUrl(signature),
+      serializedTransaction: serializedTx,
+      escrowId,
+      solanaPda: pda.toBase58(),
+      seed: seed.toString(),
+      totalAmount,
+      clientEmailHash,
     });
   } catch (error: any) {
     console.error('Create escrow failed', error);
