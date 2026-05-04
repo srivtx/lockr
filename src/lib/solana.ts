@@ -16,7 +16,7 @@ import {
 } from '@solana/spl-token';
 
 // Import the real TrustLock IDL
-import trustlockIdl from '../../../target/idl/trustlock.json';
+import trustlockIdl from './idl/trustlock.json';
 
 const HELIUS_RPC_URL = process.env.HELIUS_RPC_URL;
 const NEXT_PUBLIC_RPC_URL = process.env.NEXT_PUBLIC_RPC_URL;
