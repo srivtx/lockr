@@ -31,10 +31,22 @@ export async function POST(req: NextRequest) {
       customer_name,
     } = parsed.data;
 
-    const session = await (dodoClient as any).checkoutSessions.create({
+    const payment = await dodoClient.payments.create({
+      billing: {
+        city: "San Francisco",
+        country: "US",
+        state: "CA",
+        street: "123 Market St",
+        zipcode: "94105",
+      },
+      customer: {
+        create_new_customer: true,
+        email: customer_email,
+        name: customer_name || "Lockr Customer",
+      },
       product_cart: [
         {
-          product_id: process.env.DODO_PRODUCT_ID,
+          product_id: process.env.DODO_PRODUCT_ID as string,
           quantity: 1,
           amount,
         },
@@ -43,18 +55,13 @@ export async function POST(req: NextRequest) {
         escrow_id,
         solana_pda_address,
       },
-      customer: {
-        email: customer_email,
-        name: customer_name,
-      },
+      payment_link: true,
       return_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`,
-      confirm: false,
     });
 
     return NextResponse.json({
-      session_id: session.session_id,
-      checkout_url: session.checkout_url,
+      session_id: payment.payment_id,
+      checkout_url: payment.payment_link,
     });
   } catch (error: any) {
     console.error('Checkout creation failed', error);
