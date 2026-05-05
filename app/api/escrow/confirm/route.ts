@@ -78,7 +78,10 @@ export async function POST(req: NextRequest) {
         escrowId: escrow.escrowId,
         solanaPda: escrow.solanaPda,
         status: escrow.status,
-        milestones: escrow.milestones,
+        milestones: escrow.milestones.map(m => ({
+          ...m,
+          amount: m.amount.toString(),
+        })),
       },
       signature,
       explorer: getExplorerUrl(signature),
