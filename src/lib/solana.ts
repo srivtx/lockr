@@ -2,6 +2,7 @@ import {
   Connection,
   Keypair,
   PublicKey,
+  SYSVAR_RENT_PUBKEY,
   Transaction,
   TransactionInstruction,
   SystemProgram,
@@ -200,7 +201,7 @@ export async function buildFundMilestoneTx(
       tokenProgram: TOKEN_PROGRAM_ID,
       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       systemProgram: SystemProgram.programId,
-      rent: SystemProgram.programId,
+      rent: SYSVAR_RENT_PUBKEY,
     })
     .transaction();
 
