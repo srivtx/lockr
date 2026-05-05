@@ -1,14 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dodoClient } from '@/src/lib/dodo';
 import { prisma } from '@/src/lib/prisma';
-import { Queue } from 'bullmq';
-import Redis from 'ioredis';
-
-const redisConnection = new Redis(process.env.REDIS_URL!, {
-  maxRetriesPerRequest: null,
-});
-
-const solanaTxQueue = new Queue('solana-tx', { connection: redisConnection });
 
 export async function POST(req: NextRequest) {
   const rawBody = await req.text();
@@ -34,8 +26,17 @@ export async function POST(req: NextRequest) {
 
     const paymentId = data.payment_id;
     const escrowId = data.metadata?.escrow_id;
-    const solanaPda = data.metadata?.solana_pda_address;
+    const solanaPdaFromMetadata = data.metadata?.solana_pda_address;
     const checkoutSessionId = data.checkout_session_id ?? '';
+
+    // Lookup escrow first: Dodo metadata carries business escrowId, while
+    // PaymentEvent.escrowId expects the DB primary key (Escrow.id).
+    const escrowRecord = escrowId
+      ? await prisma.escrow.findUnique({
+          where: { escrowId },
+          include: { milestones: true },
+        })
+      : null;
 
     // Idempotency check via unique constraint on dodoPaymentId
     try {
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
           dodoCheckoutSessionId: checkoutSessionId,
           status: data.status,
           metadata: data.metadata as any,
-          escrowId: escrowId ?? null,
+          escrowId: escrowRecord?.id ?? null,
         },
       });
     } catch (err: any) {
@@ -56,19 +57,18 @@ export async function POST(req: NextRequest) {
       throw err;
     }
 
-    // Update escrow status if found
-    if (escrowId) {
-      await prisma.escrow.updateMany({
-        where: { escrowId },
-        data: { status: 'FUNDING' },
-      });
+    if (!escrowId) {
+      console.error('Webhook missing escrow_id metadata', { paymentId, checkoutSessionId });
+      return NextResponse.json({ received: true, ignored: 'missing_escrow_id' });
     }
 
-    // Execute Solana transaction directly in the webhook (Vercel serverless doesn't support persistent workers)
-    const escrowRecord = await prisma.escrow.findUnique({
+    // Update escrow status if found
+    await prisma.escrow.updateMany({
       where: { escrowId },
-      include: { milestones: true },
+      data: { status: 'FUNDING' },
     });
+
+    const solanaPda = solanaPdaFromMetadata || escrowRecord?.solanaPda;
 
     if (escrowRecord && solanaPda) {
       const pendingMilestones = escrowRecord.milestones
@@ -121,6 +121,10 @@ export async function POST(req: NextRequest) {
           ]);
         } catch (err) {
           console.error(`Funding failed for escrow ${escrowId}:`, err);
+          await prisma.escrow.updateMany({
+            where: { escrowId },
+            data: { status: 'FAILED' },
+          });
           // In production, you would want to implement a retry mechanism or alert
         }
       }
