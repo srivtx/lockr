@@ -59,14 +59,14 @@ export async function POST(req: NextRequest) {
     // Update escrow status if found
     if (escrowId) {
       await prisma.escrow.updateMany({
-        where: { id: escrowId },
+        where: { escrowId },
         data: { status: 'FUNDING' },
       });
     }
 
     // Execute Solana transaction directly in the webhook (Vercel serverless doesn't support persistent workers)
     const escrowRecord = await prisma.escrow.findUnique({
-      where: { id: escrowId },
+      where: { escrowId },
       include: { milestones: true },
     });
 
@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
           // Update final status
           await prisma.$transaction([
             prisma.escrow.update({
-              where: { id: escrowId },
+              where: { escrowId },
               data: {
                 status: 'FUNDED',
                 fundingSignature: signatures[0],
