@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
     const {
       escrow_id,
       solana_pda_address,
-      product_id,
       amount,
       customer_email,
       customer_name,
@@ -35,7 +34,7 @@ export async function POST(req: NextRequest) {
     const session = await (dodoClient as any).checkoutSessions.create({
       product_cart: [
         {
-          product_id: product_id,
+          product_id: process.env.DODO_PRODUCT_ID,
           quantity: 1,
           amount,
         },
