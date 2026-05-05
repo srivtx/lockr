@@ -108,26 +108,28 @@ export async function getOrCreateTokenAccount(
   payer?: Keypair
 ): Promise<PublicKey> {
   const ata = getAssociatedTokenAddressSync(mint, owner, true);
-  try {
-    await connection.getAccountInfo(ata);
-    return ata;
-  } catch {
-    // Account doesn't exist, create it
-    const tx = new Transaction().add(
-      createAssociatedTokenAccountInstruction(
-        payer ? payer.publicKey : owner,
-        ata,
-        owner,
-        mint,
-        TOKEN_PROGRAM_ID,
-        ASSOCIATED_TOKEN_PROGRAM_ID
-      )
-    );
-    if (payer) {
-      await sendAndConfirmTransaction(connection, tx, [payer]);
-    }
+  const ataInfo = await connection.getAccountInfo(ata);
+  if (ataInfo) {
     return ata;
   }
+
+  if (!payer) {
+    throw new Error('Payer keypair is required to create associated token account');
+  }
+
+  // Account doesn't exist, create it with backend payer.
+  const tx = new Transaction().add(
+    createAssociatedTokenAccountInstruction(
+      payer.publicKey,
+      ata,
+      owner,
+      mint,
+      TOKEN_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    )
+  );
+  await sendAndConfirmTransaction(connection, tx, [payer]);
+  return ata;
 }
 
 export async function buildCreateEscrowTx(
@@ -175,8 +177,16 @@ export async function buildFundMilestoneTx(
   const program = getBackendProgram();
   const kp = getEscrowKeypair();
 
-  const escrowTokenAccount = getAssociatedTokenAddressSync(USDC_MINT_DEVNET, escrowPda, true);
-  const payerTokenAccount = getAssociatedTokenAddressSync(USDC_MINT_DEVNET, kp.publicKey, true);
+  const escrowTokenAccount = await getOrCreateTokenAccount(
+    USDC_MINT_DEVNET,
+    escrowPda,
+    kp
+  );
+  const payerTokenAccount = await getOrCreateTokenAccount(
+    USDC_MINT_DEVNET,
+    kp.publicKey,
+    kp
+  );
 
   const tx = await program.methods
     .fundEscrow(escrowId, milestoneIndex, seed)
