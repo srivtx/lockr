@@ -64,19 +64,67 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Enqueue job to fund escrow on Solana
-    await solanaTxQueue.add(
-      'fund-escrow',
-      {
-        paymentId,
-        escrowId,
-        solanaPda,
-      },
-      {
-        attempts: 5,
-        backoff: { type: 'exponential', delay: 5000 },
+    // Execute Solana transaction directly in the webhook (Vercel serverless doesn't support persistent workers)
+    const escrowRecord = await prisma.escrow.findUnique({
+      where: { id: escrowId },
+      include: { milestones: true },
+    });
+
+    if (escrowRecord && solanaPda) {
+      const pendingMilestones = escrowRecord.milestones
+        .sort((a, b) => a.index - b.index)
+        .filter((m) => m.status === 'PENDING');
+
+      if (pendingMilestones.length > 0) {
+        try {
+          const { buildFundMilestoneTx, signAndSendTransaction } = await import('@/src/lib/solana');
+          const { PublicKey } = await import('@solana/web3.js');
+          const anchor = await import('@coral-xyz/anchor');
+
+          const escrowPdaPubkey = new PublicKey(solanaPda);
+          const freelancerWallet = new PublicKey(escrowRecord.freelancerWallet);
+          const seedBn = new anchor.BN(escrowRecord.seed.toString());
+
+          const signatures: string[] = [];
+
+          for (const milestone of pendingMilestones) {
+            const tx = await buildFundMilestoneTx(
+              escrowRecord.escrowId,
+              milestone.index,
+              seedBn,
+              escrowPdaPubkey,
+              freelancerWallet
+            );
+
+            const signature = await signAndSendTransaction(tx);
+            signatures.push(signature);
+
+            await prisma.milestone.update({
+              where: { id: milestone.id },
+              data: { status: 'FUNDED' },
+            });
+          }
+
+          // Update final status
+          await prisma.$transaction([
+            prisma.escrow.update({
+              where: { id: escrowId },
+              data: {
+                status: 'FUNDED',
+                fundingSignature: signatures[0],
+              },
+            }),
+            prisma.paymentEvent.updateMany({
+              where: { dodoPaymentId: paymentId },
+              data: { signature: signatures[0], completedAt: new Date() },
+            }),
+          ]);
+        } catch (err) {
+          console.error(`Funding failed for escrow ${escrowId}:`, err);
+          // In production, you would want to implement a retry mechanism or alert
+        }
       }
-    );
+    }
 
     return NextResponse.json({ received: true });
   } catch (err: any) {
