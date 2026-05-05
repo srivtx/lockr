@@ -5,6 +5,7 @@ import { Resend } from 'resend';
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
+const resendFrom = process.env.RESEND_FROM_EMAIL || 'LOCKR <onboarding@resend.dev>';
 
 export async function POST(
   req: NextRequest,
@@ -48,8 +49,8 @@ export async function POST(
     if (!resend) {
       console.warn('RESEND_API_KEY not configured. Skipping client approval email.');
     } else {
-      await resend.emails.send({
-        from: 'LOCKR <onboarding@resend.dev>',
+      const { error: resendError } = await resend.emails.send({
+        from: resendFrom,
         to: escrow.clientEmail,
         subject: 'Milestone delivered - approve release in LOCKR',
         html: `
@@ -74,9 +75,23 @@ export async function POST(
         `,
         text: `A milestone was marked delivered.\n\nReview and approve release:\n${approveUrl}`,
       });
+
+      if (resendError) {
+        console.error('Resend send failed', {
+          escrowId: escrow.id,
+          milestoneIndex: milestone.index,
+          clientEmail: escrow.clientEmail,
+          resendFrom,
+          resendError,
+        });
+        return NextResponse.json(
+          { error: 'Milestone updated but email delivery failed', details: resendError },
+          { status: 502 }
+        );
+      }
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, emailSent: !!resend });
   } catch (error: any) {
     console.error('Mark delivered failed', error);
     return NextResponse.json(
