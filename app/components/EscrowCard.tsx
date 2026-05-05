@@ -7,7 +7,7 @@ import StatusBadge from "./StatusBadge";
 interface Milestone {
   description: string;
   amount: number;
-  status: "pending" | "funded" | "complete" | "released" | "refunded";
+  status: string;
 }
 
 interface EscrowCardProps {
@@ -31,8 +31,8 @@ export default function EscrowCard({
   deadline,
   solanaPda,
 }: EscrowCardProps) {
-  const funded = milestones.filter((m) => m.status !== "pending").length;
-  const released = milestones.filter((m) => m.status === "released").length;
+  const funded = milestones.filter((m) => m.status !== "PENDING").length;
+  const released = milestones.filter((m) => m.status === "RELEASED").length;
   const total = milestones.length;
   const progress = total > 0 ? (released / total) * 100 : 0;
 

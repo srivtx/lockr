@@ -180,7 +180,7 @@ export default function EscrowDetailPage() {
               id: m.id,
               description: m.description,
               amount: Number(m.amount) / 1_000_000,
-              status: m.status.toLowerCase() as any,
+              status: m.status,
             }))}
             totalAmount={totalAmountNum}
             onMarkDelivered={isFreelancer ? (idx) => handleMarkDelivered(idx) : undefined}
