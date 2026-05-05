@@ -20,7 +20,17 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
-    return NextResponse.json({ escrows });
+    const safeEscrows = escrows.map((e) => ({
+      ...e,
+      totalAmount: e.totalAmount.toString(),
+      seed: e.seed.toString(),
+      milestones: e.milestones.map((m) => ({
+        ...m,
+        amount: m.amount.toString(),
+      })),
+    }));
+
+    return NextResponse.json({ escrows: safeEscrows });
   } catch (error: any) {
     console.error('Failed to fetch escrows', error);
     return NextResponse.json(
