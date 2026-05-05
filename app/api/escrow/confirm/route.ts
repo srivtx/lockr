@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
       milestones,
       signature,
     } = parsed.data;
+    const clientSecretKey = crypto.randomUUID();
 
     // Save to database
     const escrow = await prisma.escrow.create({
@@ -59,6 +60,7 @@ export async function POST(req: NextRequest) {
         deadline: new Date(deadline),
         seed: BigInt(seed),
         fundingSignature: signature,
+        clientSecretKey,
         milestones: {
           create: milestones.map((m, index) => ({
             index,

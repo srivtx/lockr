@@ -1,49 +1,32 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import nacl from "tweetnacl";
 import StatusBadge from "../../components/StatusBadge";
 
-interface MilestoneData {
-  escrowId: string;
-  milestoneIndex: number;
-  milestoneDescription: string;
-  amount: number;
-  deadline: number;
+interface Milestone {
+  id: string;
+  index: number;
+  description: string;
+  amount: string;
+  status: string;
 }
 
-function decodeToken(token: string): MilestoneData | null {
-  try {
-    const decoded = JSON.parse(atob(token));
-    if (
-      typeof decoded.escrowId === "string" &&
-      typeof decoded.milestoneIndex === "number" &&
-      typeof decoded.milestoneDescription === "string" &&
-      typeof decoded.amount === "number" &&
-      typeof decoded.deadline === "number"
-    ) {
-      return decoded as MilestoneData;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function deriveKeypairFromToken(token: string): nacl.SignKeyPair {
-  const hash = new Uint8Array(64);
-  for (let i = 0; i < token.length; i++) {
-    hash[i % 64] ^= token.charCodeAt(i);
-  }
-  const seed = hash.slice(0, 32);
-  return nacl.sign.keyPair.fromSeed(seed);
+interface EscrowStatusResponse {
+  escrow: {
+    id: string;
+    status: string;
+  };
+  milestones: Milestone[];
 }
 
 export default function ApprovePage() {
-  const { token } = useParams<{ token: string }>();
-  const [data, setData] = useState<MilestoneData | null>(null);
+  const { id } = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
+  const secret = searchParams.get("secret") || "";
+
+  const [data, setData] = useState<EscrowStatusResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -51,34 +34,44 @@ export default function ApprovePage() {
   const [txSignature, setTxSignature] = useState<string | null>(null);
 
   useEffect(() => {
-    if (token) {
-      const decoded = decodeToken(token);
-      setData(decoded);
-      setLoading(false);
-    }
-  }, [token]);
+    if (!id) return;
+    fetch(`/api/escrow/${id}/status`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.error) {
+          setError(result.error);
+        } else {
+          setData(result);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Failed to load approval details.");
+        setLoading(false);
+      });
+  }, [id]);
+
+  const releasableMilestone = useMemo(() => {
+    if (!data) return null;
+    return (
+      data.milestones.find((m) => m.status === "COMPLETED") ||
+      data.milestones.find((m) => m.status === "FUNDED") ||
+      null
+    );
+  }, [data]);
 
   const handleApprove = async () => {
-    if (!data || !token) return;
+    if (!id || !releasableMilestone || !secret) return;
     setSubmitting(true);
     setError(null);
 
     try {
-      const message = `release:${data.escrowId}:${data.milestoneIndex}:${data.deadline}`;
-      const messageBytes = new TextEncoder().encode(message);
-      const keypair = deriveKeypairFromToken(token);
-      const signature = nacl.sign.detached(messageBytes, keypair.secretKey);
-      const signatureBase64 = btoa(String.fromCharCode(...Array.from(signature)));
-      const publicKeyBase64 = btoa(String.fromCharCode(...Array.from(keypair.publicKey)));
-
-      // Note: The API expects milestone_index and client_signature / client_public_key
-      const res = await fetch(`/api/escrow/${data.escrowId}/approve`, {
+      const res = await fetch(`/api/escrow/${id}/approve`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          milestone_index: data.milestoneIndex,
-          client_signature: signatureBase64,
-          client_public_key: publicKeyBase64,
+          milestone_index: releasableMilestone.index,
+          secret,
         }),
       });
 
@@ -105,7 +98,7 @@ export default function ApprovePage() {
     );
   }
 
-  if (!data) {
+  if (!data || !secret) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">
         Invalid or expired approval link.
@@ -152,38 +145,42 @@ export default function ApprovePage() {
               Review the milestone below and confirm to release funds to the freelancer.
             </p>
 
-            <div className="mt-8 rounded-xl border border-slate-800 bg-slate-900 p-6 space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-400">Escrow</span>
-                <span className="text-sm font-mono text-slate-200">#{data.escrowId.slice(0, 8)}</span>
+            {releasableMilestone ? (
+              <div className="mt-8 rounded-xl border border-slate-800 bg-slate-900 p-6 space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-400">Escrow</span>
+                  <span className="text-sm font-mono text-slate-200">#{data.escrow.id.slice(0, 8)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-400">Milestone</span>
+                  <span className="text-sm font-medium text-slate-200">{releasableMilestone.description}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-400">Amount</span>
+                  <span className="text-sm font-semibold text-emerald-400">
+                    ${(Number(releasableMilestone.amount) / 1_000_000).toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-400">Status</span>
+                  <StatusBadge status={releasableMilestone.status} />
+                </div>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-400">Milestone</span>
-                <span className="text-sm font-medium text-slate-200">{data.milestoneDescription}</span>
+            ) : (
+              <div className="mt-8 rounded-xl border border-slate-800 bg-slate-900 p-6 text-center text-slate-400">
+                No releasable milestone found for this escrow.
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-400">Amount</span>
-                <span className="text-sm font-semibold text-emerald-400">${data.amount.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-slate-400">Status</span>
-                <StatusBadge status="COMPLETE" />
-              </div>
-            </div>
+            )}
 
             {error && <p className="mt-4 text-center text-sm text-red-400">{error}</p>}
 
             <button
               onClick={handleApprove}
-              disabled={submitting}
+              disabled={submitting || !releasableMilestone}
               className="mt-6 w-full rounded-xl bg-emerald-500 px-5 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 disabled:opacity-60"
             >
               {submitting ? "Processing..." : "Approve Release"}
             </button>
-
-            <p className="mt-4 text-center text-xs text-slate-500">
-              By clicking approve, you cryptographically sign a message authorizing the release of funds on Solana.
-            </p>
           </>
         )}
       </main>

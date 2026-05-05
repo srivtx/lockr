@@ -6,14 +6,12 @@ import {
   signAndSendTransaction,
   getExplorerUrl,
 } from '@/src/lib/solana';
-import nacl from 'tweetnacl';
 import { PublicKey } from '@solana/web3.js';
 import { BN } from '@coral-xyz/anchor';
 
 const approveSchema = z.object({
   milestone_index: z.number().int().nonnegative(),
-  client_signature: z.string().min(1),
-  client_public_key: z.string().min(1),
+  secret: z.string().min(1),
 });
 
 export async function POST(
@@ -31,8 +29,7 @@ export async function POST(
       );
     }
 
-    const { milestone_index, client_signature, client_public_key } =
-      parsed.data;
+    const { milestone_index, secret } = parsed.data;
 
     const escrow = await prisma.escrow.findUnique({
       where: { id: params.id },
@@ -64,22 +61,9 @@ export async function POST(
       );
     }
 
-    // Verify ed25519 signature against release message
-    const message = Buffer.from(
-      `release:${escrow.escrowId}:${milestone_index}:${Math.floor(new Date(escrow.deadline).getTime() / 1000)}`
-    );
-    const signatureBytes = Buffer.from(client_signature, 'base64');
-    const publicKeyBytes = Buffer.from(client_public_key, 'base64');
-
-    const isValid = nacl.sign.detached.verify(
-      message,
-      signatureBytes,
-      publicKeyBytes
-    );
-
-    if (!isValid) {
+    if (!escrow.clientSecretKey || secret !== escrow.clientSecretKey) {
       return NextResponse.json(
-        { error: 'Invalid client signature' },
+        { error: 'Invalid approval secret' },
         { status: 403 }
       );
     }
@@ -95,7 +79,7 @@ export async function POST(
       seed,
       escrowPda,
       freelancerWallet,
-      signatureBytes
+      Buffer.alloc(64, 0)
     );
     const signature = await signAndSendTransaction(tx);
 

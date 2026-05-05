@@ -93,18 +93,6 @@ export default function EscrowDetailPage() {
     }
   };
 
-  const handleApproveRelease = async (milestoneIndex: number) => {
-    // Redirect to approval page with token
-    const token = btoa(JSON.stringify({
-      escrowId: id,
-      milestoneIndex,
-      milestoneDescription: data?.milestones.find(m => m.index === milestoneIndex)?.description || "",
-      amount: Number(data?.milestones.find(m => m.index === milestoneIndex)?.amount || 0) / 1_000_000,
-      deadline: Math.floor(new Date(data?.escrow.deadline || "").getTime() / 1000),
-    }));
-    window.open(`/approve/${token}`, "_blank");
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">
@@ -184,7 +172,6 @@ export default function EscrowDetailPage() {
             }))}
             totalAmount={totalAmountNum}
             onMarkDelivered={isFreelancer ? (idx) => handleMarkDelivered(idx) : undefined}
-            onApproveRelease={!isFreelancer ? (idx) => handleApproveRelease(idx) : undefined}
             isClientView={!isFreelancer}
             isFreelancerView={isFreelancer}
           />
