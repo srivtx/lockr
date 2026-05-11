@@ -10,7 +10,7 @@ interface INRRate {
 }
 
 export default function WithdrawPage() {
-  const { publicKey, connected } = useWallet();
+  const { connected } = useWallet();
   const [balance, setBalance] = useState(1250.0);
   const [bankAccount, setBankAccount] = useState("");
   const [ifsc, setIfsc] = useState("");
@@ -26,21 +26,17 @@ export default function WithdrawPage() {
   useEffect(() => {
     if (amountNum > 0) {
       setLoadingRate(true);
-      // Mock CoinDCX API call
       fetch("https://api.coindcx.com/exchange/ticker")
         .then((res) => res.json())
         .then((data: any[]) => {
           const usdcPair = data.find((t) => t.market === "USDCINR");
-          if (usdcPair && usdcPair.last_price) {
+          if (usdcPair?.last_price) {
             setInrRate({ rate: parseFloat(usdcPair.last_price), source: "CoinDCX" });
           } else {
-            // Fallback mock rate
-            setInrRate({ rate: 83.5, source: "Mock Rate" });
+            setInrRate({ rate: 83.5, source: "Mock" });
           }
         })
-        .catch(() => {
-          setInrRate({ rate: 83.5, source: "Mock Rate" });
-        })
+        .catch(() => setInrRate({ rate: 83.5, source: "Mock" }))
         .finally(() => setLoadingRate(false));
     }
   }, [amountNum]);
@@ -48,7 +44,6 @@ export default function WithdrawPage() {
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bankAccount || !ifsc || amountNum <= 0 || amountNum > balance) return;
-
     setWithdrawing(true);
     setTimeout(() => {
       setWithdrawing(false);
@@ -58,70 +53,64 @@ export default function WithdrawPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md">
-        <div className="mx-auto flex max-w-xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-md bg-emerald-400" />
-            <span className="text-lg font-bold text-slate-100">LOCKR</span>
+    <div className="min-h-screen bg-black">
+      <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
+
+      <header className="relative z-10 border-b border-white/[0.06]">
+        <div className="mx-auto flex max-w-xl items-center justify-between px-6 h-16">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="h-6 w-6 rounded border border-white/20 flex items-center justify-center">
+              <div className="h-2 w-2 bg-white rounded-sm" />
+            </div>
+            <span className="text-sm font-medium tracking-tight">LOCKR</span>
           </Link>
-          <Link href="/dashboard" className="text-sm font-medium text-slate-400 hover:text-slate-200">
-            Dashboard
-          </Link>
+          <Link href="/dashboard" className="text-sm text-white/40 hover:text-white/70 transition-colors">Dashboard</Link>
         </div>
       </header>
 
-      <main className="mx-auto max-w-xl px-6 py-10">
-        <h1 className="text-2xl font-bold text-slate-100">Withdraw to Bank</h1>
-        <p className="mt-1 text-sm text-slate-400">Convert USDC to INR and withdraw to your Indian bank account.</p>
+      <main className="relative z-10 mx-auto max-w-xl px-6 py-12">
+        <div className="mb-10">
+          <p className="text-xs text-white/40 font-medium tracking-wide uppercase mb-2">Withdraw</p>
+          <h1 className="text-3xl font-semibold tracking-tight">Withdraw to bank</h1>
+          <p className="text-sm text-white/40 mt-2">Convert USDC to INR and withdraw to your Indian bank account.</p>
+        </div>
 
         {!connected ? (
-          <div className="mt-8 rounded-xl border border-dashed border-slate-700 bg-slate-900/50 p-10 text-center">
-            <p className="text-slate-400">Connect your wallet to view your balance and withdraw.</p>
+          <div className="border border-dashed border-white/[0.08] py-20 text-center">
+            <p className="text-white/40">Connect your wallet to withdraw.</p>
           </div>
         ) : success ? (
-          <div className="mt-8 rounded-2xl border border-emerald-800/40 bg-emerald-900/20 p-8 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/20 text-2xl">✅</div>
-            <h2 className="mt-4 text-xl font-bold text-emerald-100">Withdrawal Initiated</h2>
-            <p className="mt-2 text-sm text-emerald-200/80">
-              Your INR withdrawal is being processed. You will receive an email confirmation shortly.
-            </p>
-            <Link
-              href="/dashboard"
-              className="mt-6 inline-block rounded-lg bg-emerald-500 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-400"
-            >
+          <div className="border border-white/[0.08] p-10 text-center">
+            <div className="h-10 w-10 rounded-full border border-white/20 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <h2 className="text-xl font-semibold">Withdrawal initiated</h2>
+            <p className="text-sm text-white/40 mt-2">You will receive an email confirmation shortly.</p>
+            <Link href="/dashboard" className="mt-6 inline-flex bg-white text-black px-5 py-2.5 text-sm font-medium hover:bg-white/90 transition-colors">
               Back to Dashboard
             </Link>
           </div>
         ) : (
-          <form onSubmit={handleWithdraw} className="mt-8 space-y-6">
-            <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-500">USDC Balance</p>
-              <p className="mt-1 text-2xl font-bold text-emerald-400">${balance.toLocaleString()}</p>
+          <form onSubmit={handleWithdraw} className="space-y-8">
+            <div className="border border-white/[0.06] p-5">
+              <p className="text-xs text-white/40 uppercase tracking-wide">USDC Balance</p>
+              <p className="text-2xl font-semibold mt-1">${balance.toLocaleString()}</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Amount to Withdraw (USDC)</label>
-              <input
-                type="number"
-                step="0.01"
-                max={balance}
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.00"
-              />
-              {amountNum > balance && <p className="mt-1 text-xs text-red-400">Amount exceeds balance.</p>}
+              <label className="block text-sm font-medium text-white/60 mb-2">Amount (USDC)</label>
+              <input type="number" step="0.01" max={balance} value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" className="w-full" />
+              {amountNum > balance && <p className="mt-2 text-xs text-white/40">Exceeds balance.</p>}
             </div>
 
             {amountNum > 0 && inrRate && (
-              <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                <div className="flex justify-between text-sm text-slate-300">
+              <div className="border border-white/[0.06] p-4 space-y-2">
+                <div className="flex justify-between text-sm text-white/50">
                   <span>Rate</span>
-                  <span>
-                    1 USDC = ₹{inrRate.rate.toFixed(2)} ({inrRate.source})
-                  </span>
+                  <span>1 USDC = ₹{inrRate.rate.toFixed(2)}</span>
                 </div>
-                <div className="mt-2 flex justify-between text-base font-semibold text-slate-100">
+                <div className="h-px bg-white/[0.06]" />
+                <div className="flex justify-between text-base font-medium">
                   <span>Estimated INR</span>
                   <span>₹{estimatedINR.toLocaleString()}</span>
                 </div>
@@ -129,34 +118,24 @@ export default function WithdrawPage() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Bank Account Number</label>
-              <input
-                value={bankAccount}
-                onChange={(e) => setBankAccount(e.target.value)}
-                placeholder="1234567890"
-              />
+              <label className="block text-sm font-medium text-white/60 mb-2">Account Number</label>
+              <input value={bankAccount} onChange={(e) => setBankAccount(e.target.value)} placeholder="1234567890" className="w-full" />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">IFSC Code</label>
-              <input
-                value={ifsc}
-                onChange={(e) => setIfsc(e.target.value.toUpperCase())}
-                placeholder="HDFC0001234"
-              />
+              <label className="block text-sm font-medium text-white/60 mb-2">IFSC Code</label>
+              <input value={ifsc} onChange={(e) => setIfsc(e.target.value.toUpperCase())} placeholder="HDFC0001234" className="w-full" />
             </div>
 
             <button
               type="submit"
               disabled={withdrawing || amountNum <= 0 || amountNum > balance || !bankAccount || !ifsc}
-              className="w-full rounded-xl bg-emerald-500 px-5 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 disabled:opacity-60"
+              className="w-full bg-white text-black py-3 text-sm font-medium hover:bg-white/90 disabled:opacity-30 transition-colors"
             >
-              {withdrawing ? "Processing..." : "Confirm Withdrawal"}
+              {withdrawing ? "Processing..." : "Confirm withdrawal"}
             </button>
 
-            <p className="text-center text-xs text-slate-500">
-              This is a simulated flow. Real INR off-ramp integration is coming post-hackathon.
-            </p>
+            <p className="text-center text-xs text-white/20">Simulated flow. Real off-ramp coming post-hackathon.</p>
           </form>
         )}
       </main>

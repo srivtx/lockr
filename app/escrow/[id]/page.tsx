@@ -47,22 +47,14 @@ export default function EscrowDetailPage() {
     fetch(`/api/escrow/${id}/status`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.error) {
-          setError(data.error);
-        } else {
-          setData(data);
-        }
+        if (data.error) setError(data.error);
+        else setData(data);
         setLoading(false);
       })
-      .catch((err) => {
-        setError("Failed to load escrow");
-        setLoading(false);
-      });
+      .catch(() => { setError("Failed to load"); setLoading(false); });
   }, [id]);
 
-  const isFreelancer = publicKey && data
-    ? data.escrow.freelancerWallet === publicKey.toBase58()
-    : false;
+  const isFreelancer = publicKey && data ? data.escrow.freelancerWallet === publicKey.toBase58() : false;
 
   const handleMarkDelivered = async (milestoneIndex: number) => {
     try {
@@ -73,27 +65,19 @@ export default function EscrowDetailPage() {
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const msg =
-          typeof body.error === "string"
-            ? body.error
-            : body.details?.message
-              ? `${body.error ?? "Error"}: ${body.details.message}`
-              : `Request failed (${res.status}). Check Vercel logs for /api/escrow/.../deliver.`;
+        const msg = typeof body.error === "string" ? body.error : `Failed (${res.status})`;
         throw new Error(msg);
       }
-      alert("Milestone marked as delivered! Client will be notified.");
+      alert("Milestone marked delivered. Client notified.");
       window.location.reload();
     } catch (err: any) {
-      alert(err?.message || "Network error — could not reach server.");
+      alert(err?.message || "Failed");
     }
   };
 
   const handleTriggerRefund = async () => {
     try {
-      const res = await fetch(`/api/escrow/${id}/refund`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const res = await fetch(`/api/escrow/${id}/refund`, { method: "POST" });
       if (!res.ok) throw new Error("Refund failed");
       alert("Refund triggered.");
       window.location.reload();
@@ -104,16 +88,16 @@ export default function EscrowDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">
-        Loading escrow...
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="h-5 w-5 border border-white/20 border-t-white animate-spin" />
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">
-        {error || "Escrow not found."}
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <p className="text-white/40">{error || "Not found"}</p>
       </div>
     );
   }
@@ -124,79 +108,74 @@ export default function EscrowDetailPage() {
   const totalAmountNum = Number(escrow.totalAmount) / 1_000_000;
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-md bg-emerald-400" />
-            <span className="text-lg font-bold text-slate-100">LOCKR</span>
+    <div className="min-h-screen bg-black">
+      <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
+
+      <header className="relative z-10 border-b border-white/[0.06]">
+        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 h-16">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="h-6 w-6 rounded border border-white/20 flex items-center justify-center">
+              <div className="h-2 w-2 bg-white rounded-sm" />
+            </div>
+            <span className="text-sm font-medium tracking-tight">LOCKR</span>
           </Link>
-          <Link href="/dashboard" className="text-sm font-medium text-slate-400 hover:text-slate-200">
-            Back to Dashboard
-          </Link>
+          <Link href="/dashboard" className="text-sm text-white/40 hover:text-white/70 transition-colors">Back</Link>
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-6 py-10">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <main className="relative z-10 mx-auto max-w-4xl px-6 py-12">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-10">
           <div>
-            <h1 className="text-2xl font-bold text-slate-100">Escrow #{escrow.id.slice(0, 8)}</h1>
-            <p className="mt-1 text-sm text-slate-400">{escrow.clientEmail}</p>
+            <p className="text-xs text-white/40 font-medium tracking-wide uppercase mb-2">Escrow</p>
+            <h1 className="text-2xl font-semibold tracking-tight">#{escrow.id.slice(0, 8)}</h1>
+            <p className="text-sm text-white/30 mt-1">{escrow.clientEmail}</p>
           </div>
           <StatusBadge status={escrow.status} />
         </div>
 
-        <div className="mb-8 grid gap-4 sm:grid-cols-3">
-          <InfoCard label="Client" value={escrow.clientEmail} />
-          <InfoCard label="Total Amount" value={`$${totalAmountNum.toLocaleString()}`} />
-          <InfoCard
-            label="Deadline"
-            value={new Date(escrow.deadline).toLocaleDateString()}
-            highlight={deadlinePassed ? "text-red-400" : "text-slate-100"}
-          />
+        {/* Info grid */}
+        <div className="grid gap-px bg-white/[0.06] mb-10">
+          <div className="grid sm:grid-cols-3">
+            <InfoItem label="Client" value={escrow.clientEmail} />
+            <InfoItem label="Total" value={`$${totalAmountNum.toLocaleString()}`} />
+            <InfoItem label="Deadline" value={new Date(escrow.deadline).toLocaleDateString()} warning={deadlinePassed} />
+          </div>
         </div>
 
+        {/* Funding tx */}
         {escrow.fundingSignature && (
-          <div className="mb-6 rounded-xl border border-slate-800 bg-slate-900 p-4">
-            <p className="text-xs font-medium uppercase tracking-wider text-slate-500">Funding Transaction</p>
+          <div className="border border-white/[0.06] p-4 mb-10">
+            <p className="text-xs text-white/40 uppercase tracking-wide">Funding transaction</p>
             <a
               href={`https://explorer.solana.com/tx/${escrow.fundingSignature}?cluster=devnet`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1 inline-block text-sm font-mono text-emerald-400 hover:text-emerald-300"
+              className="mt-1 inline-block text-sm font-mono text-white/50 hover:text-white/80 transition-colors border-b border-white/10"
             >
-              {escrow.fundingSignature.slice(0, 20)}...{escrow.fundingSignature.slice(-8)}
+              {escrow.fundingSignature.slice(0, 16)}...{escrow.fundingSignature.slice(-8)}
             </a>
           </div>
         )}
 
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-slate-100 mb-4">Milestones</h2>
+        {/* Milestones */}
+        <div className="mb-10">
+          <p className="text-xs text-white/40 font-medium tracking-wide uppercase mb-4">Milestones</p>
           <MilestoneList
-            milestones={milestones.map(m => ({
-              id: m.id,
-              description: m.description,
-              amount: Number(m.amount) / 1_000_000,
-              status: m.status,
-            }))}
+            milestones={milestones.map(m => ({ id: m.id, description: m.description, amount: Number(m.amount) / 1_000_000, status: m.status }))}
             totalAmount={totalAmountNum}
             onMarkDelivered={isFreelancer ? (idx) => handleMarkDelivered(idx) : undefined}
-            isClientView={!isFreelancer}
             isFreelancerView={isFreelancer}
           />
         </div>
 
-        {isFreelancer && deadlinePassed && escrow.status !== 'REFUNDED' && escrow.status !== 'COMPLETED' && (
-          <div className="rounded-xl border border-red-800/40 bg-red-900/20 p-5">
-            <h3 className="text-sm font-semibold text-red-300">Deadline Passed</h3>
-            <p className="mt-1 text-xs text-red-400/80">
-              The client did not approve releases before the deadline. You can trigger a refund.
-            </p>
-            <button
-              onClick={handleTriggerRefund}
-              className="mt-3 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500"
-            >
-              Trigger Refund
+        {/* Refund */}
+        {isFreelancer && deadlinePassed && escrow.status !== "REFUNDED" && escrow.status !== "COMPLETED" && (
+          <div className="border border-white/[0.08] p-6">
+            <p className="text-sm font-medium">Deadline passed</p>
+            <p className="text-xs text-white/40 mt-1">Client did not approve releases. You can trigger a refund.</p>
+            <button onClick={handleTriggerRefund} className="mt-4 border border-white/[0.12] px-4 py-2 text-sm text-white/60 hover:text-white hover:border-white/30 transition-colors">
+              Trigger refund
             </button>
           </div>
         )}
@@ -205,19 +184,11 @@ export default function EscrowDetailPage() {
   );
 }
 
-function InfoCard({
-  label,
-  value,
-  highlight = "text-slate-100",
-}: {
-  label: string;
-  value: string;
-  highlight?: string;
-}) {
+function InfoItem({ label, value, warning }: { label: string; value: string; warning?: boolean }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-      <p className="text-xs font-medium uppercase tracking-wider text-slate-500">{label}</p>
-      <p className={`mt-1 text-base font-semibold ${highlight}`}>{value}</p>
+    <div className="bg-black p-5">
+      <p className="text-xs text-white/40 uppercase tracking-wide">{label}</p>
+      <p className={`text-base font-medium mt-1 ${warning ? "text-white/50" : "text-white"}`}>{value}</p>
     </div>
   );
 }
