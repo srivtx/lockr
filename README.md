@@ -7,6 +7,23 @@ Milestone-based escrow for Indian freelancers. Fiat in. Trustless out.
 
 LOCKR lets clients pay freelancers in INR through Dodo Payments, then locks those funds in a Solana smart contract as USDC. Work gets delivered, client approves, freelancer receives stablecoins in seconds — not days.
 
+**Live demo:** [lockr.srivtx.tech](https://lockr.srivtx.tech)
+
+---
+
+## Colosseum Solana Frontier Hackathon 2026
+
+Built for the [Colosseum Solana Frontier Hackathon](https://colosseum.com/frontier) — the world's largest online Solana hackathon with 18,000+ builders competing for $250,000 in prizes and accelerator spots.
+
+| | |
+|---|---|
+| **Hackathon** | Colosseum Solana Frontier 2026 |
+| **Dates** | April 6 — May 11, 2026 |
+| **Track** | Payments + Commerce |
+| **Live** | [lockr.srivtx.tech](https://lockr.srivtx.tech) |
+| **Demo** | [Watch on Vimeo](https://vimeo.com/1191304055) |
+| **Repo** | [github.com/srivtx/lockr](https://github.com/srivtx/lockr) |
+
 ---
 
 ## Overview
@@ -15,7 +32,11 @@ Freelancers in India lose an estimated **$3.2B annually** to payment delays and 
 
 LOCKR bridges this gap. It is a non-custodial escrow protocol with a fiat on-ramp. The client pays in their currency. The freelancer receives USDC on Solana. A smart contract enforces the terms — not a platform.
 
-**Live demo:** [lockr.srivtx.tech](https://lockr.srivtx.tech)
+This project demonstrates:
+- **Real-world utility** — Solves a $3.2B problem for 15M+ Indian freelancers
+- **Payments innovation** — First escrow protocol with Dodo Payments fiat on-ramp
+- **Solana-native design** — Sub-second settlement, $0.001 fees, program-owned escrow
+- **Full-stack delivery** — Smart contract + frontend + backend + email automation
 
 ---
 
@@ -149,6 +170,14 @@ The escrow program is deployed on **Solana Devnet**:
 ```
 Program ID: F6PigaZhXTPpb6ao46yr4U4gWBzv5xqKPps7szv6AGyD
 ```
+
+---
+
+## Contact
+
+Questions or feedback? Reach out on X.
+
+[![X](https://img.shields.io/badge/Follow%20%40lockr__sol-black?logo=x&logoColor=white)](https://x.com/lockr_sol)
 
 ---
 
