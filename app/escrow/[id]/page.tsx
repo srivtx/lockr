@@ -203,7 +203,7 @@ function FlowSteps({ status }: { status: string }) {
   const currentIndex = statusOrder.indexOf(status);
 
   return (
-    <div className="flex items-center gap-0">
+    <div className="flex items-start gap-0">
       {steps.map((step, i) => {
         const stepIndex = statusOrder.indexOf(step.key);
         const isActive = currentIndex >= stepIndex;
@@ -212,7 +212,7 @@ function FlowSteps({ status }: { status: string }) {
         return (
           <React.Fragment key={step.key}>
             {i > 0 && (
-              <div className={`h-[1px] w-6 sm:w-10 ${isActive ? "bg-white/30" : "bg-white/[0.06]"}`} />
+              <div className={`h-[1px] w-6 sm:w-10 mt-[3px] shrink-0 ${isActive ? "bg-white/30" : "bg-white/[0.06]"}`} />
             )}
             <div className="flex flex-col items-center gap-2">
               <div 
