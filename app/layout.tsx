@@ -9,6 +9,9 @@ const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" }
 export const metadata: Metadata = {
   title: "LOCKR — Escrow for Indian Freelancers",
   description: "Fiat in. Trustless out. Milestone escrow powered by Solana.",
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
