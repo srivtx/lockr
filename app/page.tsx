@@ -99,73 +99,73 @@ export default function LandingPage() {
       <div className="h-16" />
       <div className={`transition-all duration-300 ${scrolled ? "h-0" : "h-6"}`} />
 
-      {/* Hero */}
-      <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-24">
-        <div className="max-w-3xl">
-          <p className="fade-in text-sm text-white/40 font-medium tracking-wide uppercase mb-6">
-            Solana Frontier Hackathon
-          </p>
-          <h1 className="fade-in delay-100 text-6xl sm:text-7xl lg:text-[88px] font-semibold tracking-tight leading-[1.05] text-gradient">
-            Get paid for every milestone.
-          </h1>
-          <p className="fade-in delay-200 mt-8 text-lg sm:text-xl text-white/50 leading-relaxed max-w-xl">
-            Your client pays in fiat. Funds lock on-chain as USDC. 
-            You deliver work. Client approves. Money hits your wallet in seconds.
-          </p>
-          <div className="fade-in delay-300 mt-10 flex items-center gap-6">
-            <Link
-              href="/dashboard"
-              className="group inline-flex items-center gap-2 bg-white text-black px-6 py-3 text-sm font-medium hover:bg-white/90 transition-colors duration-200"
-            >
-              {connected ? "Go to Dashboard" : "Create Your First Escrow"}
-              <span className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200">
+      {/* Hero with video background */}
+      <section className="relative z-10 min-h-[100dvh] flex flex-col justify-center">
+        {/* Video background */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <iframe
+            src="https://player.vimeo.com/video/1191304055?background=1&autoplay=1&loop=1&muted=1&controls=0&badge=0"
+            className="absolute w-[177vh] h-[100dvh] min-w-full min-h-[56.25vw] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-cover"
+            frameBorder="0"
+            allow="autoplay; fullscreen"
+            title="LOCKR Background"
+          />
+          {/* Dark overlay for readability */}
+          <div className="absolute inset-0 bg-black/60" />
+          {/* Bottom fade to black for seamless transition */}
+          <div 
+            className="absolute bottom-0 left-0 right-0 h-48"
+            style={{ background: 'linear-gradient(to bottom, transparent, black)' }}
+          />
+        </div>
+
+        {/* Hero content */}
+        <div className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-24">
+          <div className="max-w-3xl">
+            <p className="fade-in text-sm text-white/40 font-medium tracking-wide uppercase mb-6">
+              Solana Frontier Hackathon
+            </p>
+            <h1 className="fade-in delay-100 text-6xl sm:text-7xl lg:text-[88px] font-semibold tracking-tight leading-[1.05] text-gradient">
+              Get paid for every milestone.
+            </h1>
+            <p className="fade-in delay-200 mt-8 text-lg sm:text-xl text-white/50 leading-relaxed max-w-xl">
+              Your client pays in fiat. Funds lock on-chain as USDC. 
+              You deliver work. Client approves. Money hits your wallet in seconds.
+            </p>
+            <div className="fade-in delay-300 mt-10 flex items-center gap-6">
+              <Link
+                href="/dashboard"
+                className="group inline-flex items-center gap-2 bg-white text-black px-6 py-3 text-sm font-medium hover:bg-white/90 transition-colors duration-200"
+              >
+                {connected ? "Go to Dashboard" : "Create Your First Escrow"}
+                <span className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200">
+                  <ArrowUpRight />
+                </span>
+              </Link>
+              <a
+                href="https://github.com/srivtx/lockr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition-colors duration-300"
+              >
+                View on GitHub
                 <ArrowUpRight />
-              </span>
-            </Link>
-            <a
-              href="https://github.com/srivtx/lockr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition-colors duration-300"
-            >
-              View on GitHub
-              <ArrowUpRight />
-            </a>
-          </div>
-        </div>
-
-        {/* Stats bar */}
-        <div className="fade-in delay-400 mt-24 grid grid-cols-3 gap-px bg-white/[0.06]">
-          {[
-            { value: "3s", label: "Settlement time" },
-            { value: "$0.001", label: "Transaction cost" },
-            { value: "40+", label: "Fiat payment methods" },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-black p-6 sm:p-8 hover:bg-white/[0.02] transition-colors">
-              <p className="text-2xl sm:text-3xl font-semibold tracking-tight">{stat.value}</p>
-              <p className="mt-1 text-sm text-white/40">{stat.label}</p>
+              </a>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
 
-      {/* Video Demo */}
-      <section className="relative z-10 mx-auto max-w-5xl px-6 pb-24 scroll-reveal">
-        <div className="max-w-3xl mb-8">
-          <p className="text-sm text-white/40 font-medium tracking-wide uppercase mb-4">See it in action</p>
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-            Watch how LOCKR works.
-          </h2>
-        </div>
-        <div className="border border-white/[0.08] bg-white/[0.02] p-2 sm:p-3">
-          <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-            <iframe
-              src="https://player.vimeo.com/video/1191304055?badge=0&autopause=0&player_id=0&app_id=58479"
-              className="absolute inset-0 w-full h-full"
-              frameBorder="0"
-              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-              title="LOCKR Demo"
-            />
+          {/* Stats bar */}
+          <div className="fade-in delay-400 mt-24 grid grid-cols-3 gap-px bg-white/[0.06] backdrop-blur-sm">
+            {[
+              { value: "3s", label: "Settlement time" },
+              { value: "$0.001", label: "Transaction cost" },
+              { value: "40+", label: "Fiat payment methods" },
+            ].map((stat) => (
+              <div key={stat.label} className="bg-black/40 p-6 sm:p-8 hover:bg-black/50 transition-colors">
+                <p className="text-2xl sm:text-3xl font-semibold tracking-tight">{stat.value}</p>
+                <p className="mt-1 text-sm text-white/40">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
