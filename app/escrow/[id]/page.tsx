@@ -158,6 +158,12 @@ export default function EscrowDetailPage() {
           </div>
         )}
 
+        {/* Visual Flow */}
+        <div className="mb-10">
+          <p className="text-xs text-white/40 font-medium tracking-wide uppercase mb-4">Status</p>
+          <FlowSteps status={escrow.status} />
+        </div>
+
         {/* Milestones */}
         <div className="mb-10">
           <p className="text-xs text-white/40 font-medium tracking-wide uppercase mb-4">Milestones</p>
@@ -180,6 +186,59 @@ export default function EscrowDetailPage() {
           </div>
         )}
       </main>
+    </div>
+  );
+}
+
+function FlowSteps({ status }: { status: string }) {
+  const steps = [
+    { key: "CREATED", label: "Created" },
+    { key: "FUNDED", label: "Funded" },
+    { key: "IN_PROGRESS", label: "In Progress" },
+    { key: "COMPLETED", label: "Completed" },
+    { key: "RELEASED", label: "Released" },
+  ];
+
+  const statusOrder = ["CREATED", "FUNDING", "FUNDED", "IN_PROGRESS", "COMPLETED", "RELEASED", "REFUNDED"];
+  const currentIndex = statusOrder.indexOf(status);
+
+  return (
+    <div className="flex items-center gap-0">
+      {steps.map((step, i) => {
+        const stepIndex = statusOrder.indexOf(step.key);
+        const isActive = currentIndex >= stepIndex;
+        const isCurrent = status === step.key || (status === "FUNDING" && step.key === "FUNDED");
+        
+        return (
+          <React.Fragment key={step.key}>
+            {i > 0 && (
+              <div className={`h-[1px] w-6 sm:w-10 ${isActive ? "bg-white/30" : "bg-white/[0.06]"}`} />
+            )}
+            <div className="flex flex-col items-center gap-2">
+              <div 
+                className={`h-2 w-2 rounded-full transition-all duration-500 ${
+                  isCurrent 
+                    ? "bg-white scale-125" 
+                    : isActive 
+                      ? "bg-white/40" 
+                      : "bg-white/10"
+                }`} 
+              />
+              <span 
+                className={`text-[10px] uppercase tracking-wider transition-colors duration-300 ${
+                  isCurrent 
+                    ? "text-white" 
+                    : isActive 
+                      ? "text-white/50" 
+                      : "text-white/20"
+                }`}
+              >
+                {step.label}
+              </span>
+            </div>
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 }
