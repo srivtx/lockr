@@ -71,11 +71,20 @@ export default function EscrowDetailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ milestone_index: milestoneIndex }),
       });
-      if (!res.ok) throw new Error("Failed to mark delivered");
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const msg =
+          typeof body.error === "string"
+            ? body.error
+            : body.details?.message
+              ? `${body.error ?? "Error"}: ${body.details.message}`
+              : `Request failed (${res.status}). Check Vercel logs for /api/escrow/.../deliver.`;
+        throw new Error(msg);
+      }
       alert("Milestone marked as delivered! Client will be notified.");
       window.location.reload();
     } catch (err: any) {
-      alert(err.message);
+      alert(err?.message || "Network error — could not reach server.");
     }
   };
 
