@@ -88,7 +88,7 @@ export default function ApprovePage() {
     <div className="min-h-screen bg-black">
       <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
 
-      <header className="relative z-10 border-b border-white/[0.06]">
+      <header className="relative z-50 border-b border-white/[0.06]">
         <div className="mx-auto flex max-w-lg items-center justify-center px-6 h-16">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="h-6 w-6 rounded border border-white/20 flex items-center justify-center">
