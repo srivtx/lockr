@@ -11,7 +11,9 @@ LOCKR lets clients pay freelancers in INR through Dodo Payments, then locks thos
 
 ---
 
-## Colosseum Solana Frontier Hackathon 2026
+## Hackathon Tracks
+
+### Colosseum Solana Frontier Hackathon 2026
 
 Built for the [Colosseum Solana Frontier Hackathon](https://colosseum.com/frontier) — the world's largest online Solana hackathon with 18,000+ builders competing for $250,000 in prizes and accelerator spots.
 
@@ -20,9 +22,22 @@ Built for the [Colosseum Solana Frontier Hackathon](https://colosseum.com/fronti
 | **Hackathon** | Colosseum Solana Frontier 2026 |
 | **Dates** | April 6 — May 11, 2026 |
 | **Track** | Payments + Commerce |
-| **Live** | [lockr.srivtx.tech](https://lockr.srivtx.tech) |
-| **Demo** | [Watch on Vimeo](https://vimeo.com/1191304055) |
-| **Repo** | [github.com/srivtx/lockr](https://github.com/srivtx/lockr) |
+
+### Superteam India × Dodo Payments Track
+
+Also submitted for the [Superteam India × Dodo Payments Track](https://superteam.fun/earn/listing/payments-track-or-superteam-india-x-dodo-payments) — a dedicated prize track focused on building innovative payment solutions using Dodo Payments on Solana.
+
+| | |
+|---|---|
+| **Track** | Payments — Superteam India × Dodo Payments |
+| **Bounty** | $1,500 prize pool |
+| **Focus** | Fiat-to-crypto payments on Solana |
+
+### Links
+
+| **Live App** | [lockr.srivtx.tech](https://lockr.srivtx.tech) |
+| **Demo Video** | [Watch on Vimeo](https://vimeo.com/1191304055) |
+| **Repository** | [github.com/srivtx/lockr](https://github.com/srivtx/lockr) |
 
 ---
 
