@@ -149,6 +149,27 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Video Demo */}
+      <section className="relative z-10 mx-auto max-w-5xl px-6 pb-24 scroll-reveal">
+        <div className="max-w-3xl mb-8">
+          <p className="text-sm text-white/40 font-medium tracking-wide uppercase mb-4">See it in action</p>
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+            Watch how LOCKR works.
+          </h2>
+        </div>
+        <div className="border border-white/[0.08] bg-white/[0.02] p-2 sm:p-3">
+          <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+            <iframe
+              src="https://player.vimeo.com/video/1191304055?badge=0&autopause=0&player_id=0&app_id=58479"
+              className="absolute inset-0 w-full h-full"
+              frameBorder="0"
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+              title="LOCKR Demo"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* The Journey - Storytelling Section */}
       <section className="relative z-10 border-y border-white/[0.06]">
         <div className="mx-auto max-w-5xl px-6 py-32">
@@ -287,14 +308,15 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/[0.06]">
-        <div className="mx-auto max-w-5xl px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="h-5 w-5 rounded border border-white/20 flex items-center justify-center">
-              <div className="h-1.5 w-1.5 bg-white rounded-sm" />
+        <div className="mx-auto max-w-5xl px-6 py-8">
+          {/* Top row: brand left, X right */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2.5">
+              <div className="h-5 w-5 rounded border border-white/20 flex items-center justify-center">
+                <div className="h-1.5 w-1.5 bg-white rounded-sm" />
+              </div>
+              <span className="text-sm font-medium">LOCKR</span>
             </div>
-            <span className="text-sm font-medium">LOCKR</span>
-          </div>
-          <div className="flex items-center gap-6">
             <a
               href="https://x.com/lockr_sol"
               target="_blank"
@@ -306,7 +328,10 @@ export default function LandingPage() {
               </svg>
               Contact us
             </a>
-            <p className="text-xs text-white/30">
+          </div>
+          {/* Bottom row: centered attribution */}
+          <div className="text-center">
+            <p className="text-[11px] text-white/20 tracking-wide">
               Solana Frontier Hackathon — Superteam India × Dodo Payments
             </p>
           </div>
