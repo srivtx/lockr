@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
 import DodoBanner from "./components/DodoBanner";
@@ -10,15 +10,6 @@ function ArrowUpRight() {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M7 17L17 7" />
       <path d="M7 7h10v10" />
-    </svg>
-  );
-}
-
-function ArrowRight() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12h14" />
-      <path d="M12 5l7 7-7 7" />
     </svg>
   );
 }
@@ -33,20 +24,34 @@ function Check() {
 
 export default function LandingPage() {
   const { connected } = useWallet();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
-      {/* Grid background */}
-      <div className="absolute inset-0 grid-pattern opacity-50 pointer-events-none" />
+      {/* Grid background - fades at top */}
+      <div className="absolute inset-0 grid-pattern opacity-50 pointer-events-none" 
+           style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 20%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 20%)' }} />
       
       {/* Subtle radial glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-white/[0.02] rounded-full blur-[150px] pointer-events-none" />
 
-      {/* Navbar */}
-      <nav className="relative z-50 border-b border-white/[0.06]">
+      {/* Sticky Navbar */}
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled 
+          ? "bg-black/80 backdrop-blur-xl border-b border-white/[0.06]" 
+          : "bg-transparent border-b border-white/[0.06]"
+      }`}>
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 h-16">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="h-6 w-6 rounded border border-white/20 flex items-center justify-center">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="h-6 w-6 rounded border border-white/20 flex items-center justify-center group-hover:border-white/40 transition-colors">
               <div className="h-2 w-2 bg-white rounded-sm" />
             </div>
             <span className="text-sm font-medium tracking-tight">LOCKR</span>
@@ -60,10 +65,19 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      <DodoBanner />
+      {/* Banner - hides on scroll */}
+      <div className={`fixed top-16 left-0 right-0 z-40 transition-transform duration-300 ${
+        scrolled ? "-translate-y-full" : "translate-y-0"
+      }`}>
+        <DodoBanner />
+      </div>
+
+      {/* Spacer for fixed header */}
+      <div className="h-16" />
+      <div className={`transition-all duration-300 ${scrolled ? "h-0" : "h-6"}`} />
 
       {/* Hero */}
-      <section className="relative z-10 mx-auto max-w-5xl px-6 pt-32 pb-24">
+      <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-24">
         <div className="max-w-3xl">
           <p className="fade-in text-sm text-white/40 font-medium tracking-wide uppercase mb-6">
             Solana Frontier Hackathon
@@ -104,7 +118,7 @@ export default function LandingPage() {
             { value: "$0.001", label: "Transaction cost" },
             { value: "40+", label: "Fiat payment methods" },
           ].map((stat) => (
-            <div key={stat.label} className="bg-black p-6 sm:p-8">
+            <div key={stat.label} className="bg-black p-6 sm:p-8 hover:bg-white/[0.02] transition-colors">
               <p className="text-2xl sm:text-3xl font-semibold tracking-tight">{stat.value}</p>
               <p className="mt-1 text-sm text-white/40">{stat.label}</p>
             </div>
@@ -149,7 +163,7 @@ export default function LandingPage() {
                 details: ["Email-based approval", "On-chain release", "Seconds to settle"],
               },
             ].map((step, i) => (
-              <div key={step.num} className="bg-black p-8 sm:p-12 group">
+              <div key={step.num} className="bg-black p-8 sm:p-12 group hover:bg-white/[0.02] transition-colors duration-500">
                 <div className="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-16">
                   <div className="flex items-center gap-4 lg:w-48 shrink-0">
                     <span className="text-4xl font-semibold text-white/10 group-hover:text-white/20 transition-colors duration-500">
@@ -211,12 +225,14 @@ export default function LandingPage() {
               { name: "Helius", desc: "Reliable RPC infrastructure" },
               { name: "Supabase", desc: "PostgreSQL database" },
             ].map((tech) => (
-              <div key={tech.name} className="surface px-6 py-5 flex items-center justify-between group">
+              <div key={tech.name} className="surface px-6 py-5 flex items-center justify-between group cursor-pointer">
                 <div>
                   <p className="text-sm font-medium">{tech.name}</p>
                   <p className="text-xs text-white/40 mt-0.5">{tech.desc}</p>
                 </div>
-                <ArrowUpRight />
+                <span className="text-white/20 group-hover:text-white/50 transition-colors">
+                  <ArrowUpRight />
+                </span>
               </div>
             ))}
           </div>
