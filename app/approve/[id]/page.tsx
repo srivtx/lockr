@@ -71,7 +71,7 @@ export default function ApprovePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="h-5 w-5 border border-white/20 border-t-white animate-spin" />
+        <div className="h-5 w-5 border-2 border-white/30 border-t-white animate-spin" />
       </div>
     );
   }

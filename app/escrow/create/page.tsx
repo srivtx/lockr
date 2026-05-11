@@ -216,7 +216,7 @@ export default function CreateEscrowPage() {
             </div>
 
             {milestones.length < 5 && (
-              <button type="button" onClick={addMilestone} className="w-full border border-dashed border-white/[0.08] py-3 text-sm text-white/30 hover:text-white/50 hover:border-white/[0.15] transition-all">
+              <button type="button" onClick={addMilestone} className="w-full border border-white/[0.08] py-3 text-sm text-white/40 hover:text-white/70 hover:border-white/[0.20] transition-all">
                 + Add milestone
               </button>
             )}

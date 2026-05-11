@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import WalletProvider from "./components/WalletProvider";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   title: "LOCKR — Escrow for Indian Freelancers",
@@ -14,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen bg-black text-white antialiased font-sans">
+      <body className={`${inter.variable} ${jetbrains.variable} min-h-screen bg-black text-white antialiased font-sans`}>
         <WalletProvider>
           {children}
         </WalletProvider>

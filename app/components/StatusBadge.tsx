@@ -47,11 +47,11 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   },
   REFUNDED: {
     label: "Refunded",
-    className: "text-white/30 border-white/[0.06]",
+    className: "text-white/60 border-white/[0.12]",
   },
   FAILED: {
     label: "Failed",
-    className: "text-white/40 border-white/[0.08]",
+    className: "text-white/60 border-white/[0.12]",
   },
   PENDING: {
     label: "Pending",

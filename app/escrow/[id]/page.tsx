@@ -89,7 +89,7 @@ export default function EscrowDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="h-5 w-5 border border-white/20 border-t-white animate-spin" />
+        <div className="h-5 w-5 border-2 border-white/30 border-t-white animate-spin" />
       </div>
     );
   }
@@ -188,7 +188,7 @@ function InfoItem({ label, value, warning }: { label: string; value: string; war
   return (
     <div className="bg-black p-5">
       <p className="text-xs text-white/40 uppercase tracking-wide">{label}</p>
-      <p className={`text-base font-medium mt-1 ${warning ? "text-white/50" : "text-white"}`}>{value}</p>
+      <p className={`text-base font-medium mt-1 ${warning ? "text-white" : "text-white"}`}>{value}</p>
     </div>
   );
 }

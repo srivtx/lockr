@@ -83,15 +83,18 @@ export default function DashboardPage() {
             </div>
             <span className="text-sm font-medium tracking-tight">LOCKR</span>
           </Link>
-          <WalletMultiButton className="!bg-white !text-black !text-xs !font-medium !px-4 !py-2 !rounded-none hover:!bg-white/90 !border-0 !transition-colors" />
+          <div className="flex items-center gap-4">
+            <Link href="/" className="text-sm text-white/40 hover:text-white/70 transition-colors hidden sm:block">Home</Link>
+            <WalletMultiButton className="!bg-white !text-black !text-xs !font-medium !px-4 !py-2 !rounded-none hover:!bg-white/90 !border-0 !transition-colors" />
+          </div>
         </div>
       </header>
 
       <main className="relative z-10 mx-auto max-w-5xl px-6 py-12">
         {!connected ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="h-12 w-12 rounded border border-white/20 flex items-center justify-center mb-6">
-              <div className="h-3 w-3 bg-white/50 rounded-sm" />
+            <div className="h-12 w-12 rounded border border-white/30 flex items-center justify-center mb-6">
+              <div className="h-3 w-3 bg-white/60 rounded-sm" />
             </div>
             <h2 className="text-2xl font-semibold tracking-tight">Connect your wallet</h2>
             <p className="mt-3 text-sm text-white/40 max-w-sm">
@@ -177,7 +180,6 @@ export default function DashboardPage() {
                       status: m.status as string,
                     }))}
                     deadline={escrow.deadline}
-                    solanaPda={escrow.solanaPda}
                   />
                 ))}
               </div>

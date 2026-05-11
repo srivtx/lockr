@@ -23,7 +23,10 @@ export default function LockrWalletProvider({
   children: React.ReactNode;
 }) {
   const network = WalletAdapterNetwork.Devnet;
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const endpoint = useMemo(() =>
+    process.env.NEXT_PUBLIC_RPC_URL || clusterApiUrl(network),
+    [network]
+  );
 
   const wallets = useMemo(
     () => [

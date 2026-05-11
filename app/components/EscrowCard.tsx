@@ -18,7 +18,6 @@ interface EscrowCardProps {
   status: string;
   milestones: Milestone[];
   deadline: string;
-  solanaPda: string;
 }
 
 export default function EscrowCard({
