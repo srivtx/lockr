@@ -101,7 +101,7 @@ export default function LandingPage() {
       <div className={`transition-all duration-300 ${scrolled ? "h-0" : "h-6"}`} />
 
       {/* Hero with video background */}
-      <section className="relative z-10 min-h-[90dvh] flex flex-col justify-center mb-20">
+      <section className="relative z-10 min-h-[100dvh] flex flex-col justify-center">
         {/* Video background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe
@@ -157,7 +157,7 @@ export default function LandingPage() {
           </div>
 
           {/* Stats bar */}
-          <div className="fade-in delay-400 mt-24 grid grid-cols-3 gap-px bg-white/[0.06] backdrop-blur-sm">
+          <div className="fade-in delay-400 mt-32 grid grid-cols-3 gap-px bg-white/[0.06] backdrop-blur-sm">
             {[
               { value: "3s", label: "Settlement time" },
               { value: "$0.001", label: "Transaction cost" },
@@ -171,10 +171,10 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Sound toggle — fixed to viewport so it stays visible */}
+        {/* Sound toggle */}
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className="fixed bottom-8 right-8 z-50 flex items-center justify-center w-10 h-10 border border-white/20 hover:border-white/40 bg-black/40 backdrop-blur-sm transition-colors duration-300"
+          className="absolute bottom-8 right-8 z-20 flex items-center justify-center w-10 h-10 border border-white/20 hover:border-white/40 bg-black/40 backdrop-blur-sm transition-colors duration-300"
           aria-label={isMuted ? "Unmute video" : "Mute video"}
         >
           {isMuted ? (
