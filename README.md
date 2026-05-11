@@ -1,6 +1,6 @@
 # LOCKR
 
-[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)](https://lockr-oc7ebps49-zencodees-projects.vercel.app/)
+[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)](https://lockr.srivtx.tech)
 [![License](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
 
 Milestone-based escrow for Indian freelancers. Fiat in. Trustless out.
@@ -15,7 +15,7 @@ Freelancers in India lose an estimated **$3.2B annually** to payment delays and 
 
 LOCKR bridges this gap. It is a non-custodial escrow protocol with a fiat on-ramp. The client pays in their currency. The freelancer receives USDC on Solana. A smart contract enforces the terms — not a platform.
 
-**Live demo:** [lockr-oc7ebps49-zencodees-projects.vercel.app](https://lockr-oc7ebps49-zencodees-projects.vercel.app/)
+**Live demo:** [lockr.srivtx.tech](https://lockr.srivtx.tech)
 
 ---
 
