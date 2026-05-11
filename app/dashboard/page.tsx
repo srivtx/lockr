@@ -3,10 +3,8 @@
 import React, { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton as _WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import WalletButton from "../components/WalletButton";
 import EscrowCard from "../components/EscrowCard";
-
-const WalletMultiButton = _WalletMultiButton as React.ComponentType<any>;
 
 interface Milestone {
   id: string;
@@ -85,7 +83,7 @@ export default function DashboardPage() {
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/" className="text-sm text-white/40 hover:text-white/70 transition-colors hidden sm:block">Home</Link>
-            <WalletMultiButton className="!bg-white !text-black !text-xs !font-medium !px-4 !py-2 !rounded-none hover:!bg-white/90 !border-0 !transition-colors" />
+            <WalletButton />
           </div>
         </div>
       </header>
@@ -101,7 +99,7 @@ export default function DashboardPage() {
               Connect Phantom or Solflare to view your escrows and create new ones.
             </p>
             <div className="mt-8">
-              <WalletMultiButton className="!bg-white !text-black !text-sm !font-medium !px-6 !py-3 !rounded-none hover:!bg-white/90 !border-0 !transition-colors" />
+              <WalletButton className="!px-6 !py-3 !text-sm" />
             </div>
           </div>
         ) : (
