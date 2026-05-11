@@ -40,6 +40,15 @@ yarn-error.log*
 docs/
 research/
 
+# Development notes & test files
+agentbrain.md
+idea.md
+plan.md
+test-*.js
+
+# Keypairs (security)
+**/*keypair.json
+
 # Vercel
 .vercel
 
