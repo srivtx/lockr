@@ -3,8 +3,8 @@ import "./globals.css";
 import WalletProvider from "./components/WalletProvider";
 
 export const metadata: Metadata = {
-  title: "LOCKR — Milestone Escrow for Indian Freelancers",
-  description: "Fiat In, Trustless Out. Milestone-based escrow powered by Solana and Dodo Payments.",
+  title: "LOCKR — Escrow for Indian Freelancers",
+  description: "Fiat in. Trustless out. Milestone escrow powered by Solana.",
 };
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen bg-slate-950 text-slate-100 antialiased">
+      <body className="min-h-screen bg-black text-white antialiased font-sans">
         <WalletProvider>
           {children}
         </WalletProvider>

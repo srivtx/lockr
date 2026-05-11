@@ -28,50 +28,29 @@ export default function PaymentLinkModal({ paymentLink, onClose }: PaymentLinkMo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-      <div className="w-full max-w-lg rounded-3xl border border-slate-700/50 bg-slate-900/95 p-8 shadow-2xl shadow-black/50">
-        <div className="text-center mb-6">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 mb-4">
-            <svg className="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+      <div className="w-full max-w-md border border-white/[0.08] bg-black p-8">
+        <div className="text-center mb-8">
+          <div className="h-10 w-10 rounded-full border border-white/20 flex items-center justify-center mx-auto mb-4">
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
           </div>
-          <h3 className="text-xl font-bold text-slate-100">Payment Link Ready</h3>
-          <p className="text-sm text-slate-400 mt-2">
-            Share this link with your client. They can pay via card, UPI, or 40+ fiat methods.
-          </p>
+          <h3 className="text-lg font-semibold tracking-tight">Payment link ready</h3>
+          <p className="text-sm text-white/40 mt-2">Share this with your client</p>
         </div>
 
-        <div className="mb-6">
-          <label className="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Payment Link</label>
-          <div className="flex gap-2">
-            <input
-              readOnly
-              value={paymentLink}
-              className="flex-1 bg-slate-800/60 border-slate-700/50 text-sm font-mono text-slate-300"
-            />
-            <button
-              onClick={handleCopy}
-              className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 transition-all shrink-0"
-            >
-              {copied ? (
-                <span className="flex items-center gap-1.5">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  Copied!
-                </span>
-              ) : (
-                "Copy"
-              )}
-            </button>
-          </div>
+        <div className="flex gap-2 mb-8">
+          <input readOnly value={paymentLink} className="flex-1 text-xs font-mono text-white/50" />
+          <button
+            onClick={handleCopy}
+            className="bg-white text-black px-4 py-2 text-sm font-medium hover:bg-white/90 transition-colors shrink-0"
+          >
+            {copied ? "Copied" : "Copy"}
+          </button>
         </div>
 
-        {/* QR Code Placeholder */}
         <div className="flex justify-center mb-8">
-          <div className="rounded-2xl border border-slate-700/50 bg-white p-5">
-            <svg width="160" height="160" viewBox="0 0 160 160" className="text-slate-900">
+          <div className="border border-white/[0.08] bg-white p-4">
+            <svg width="140" height="140" viewBox="0 0 160 160" className="text-black">
               <rect width="160" height="160" fill="white" />
               <rect x="10" y="10" width="50" height="50" fill="currentColor" />
               <rect x="20" y="20" width="30" height="30" fill="white" />
@@ -100,14 +79,9 @@ export default function PaymentLinkModal({ paymentLink, onClose }: PaymentLinkMo
           </div>
         </div>
 
-        <div className="flex justify-end">
-          <button
-            onClick={onClose}
-            className="rounded-xl bg-slate-800 px-6 py-2.5 text-sm font-medium text-slate-300 hover:bg-slate-700 transition-colors"
-          >
-            Done
-          </button>
-        </div>
+        <button onClick={onClose} className="w-full border border-white/[0.08] py-2.5 text-sm text-white/50 hover:text-white/80 hover:border-white/[0.15] transition-colors">
+          Done
+        </button>
       </div>
     </div>
   );
