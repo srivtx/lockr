@@ -161,7 +161,7 @@ export default function EscrowDetailPage() {
         {/* Visual Flow */}
         <div className="mb-10">
           <p className="text-xs text-white/40 font-medium tracking-wide uppercase mb-4">Status</p>
-          <FlowSteps status={escrow.status} />
+          <FlowSteps status={escrow.status} milestones={milestones} />
         </div>
 
         {/* Milestones */}
@@ -190,7 +190,7 @@ export default function EscrowDetailPage() {
   );
 }
 
-function FlowSteps({ status }: { status: string }) {
+function FlowSteps({ status, milestones }: { status: string; milestones: { status: string }[] }) {
   const steps = [
     { key: "CREATED", label: "Created" },
     { key: "FUNDED", label: "Funded" },
@@ -200,14 +200,18 @@ function FlowSteps({ status }: { status: string }) {
   ];
 
   const statusOrder = ["CREATED", "FUNDING", "FUNDED", "IN_PROGRESS", "COMPLETED", "RELEASED", "REFUNDED"];
-  const currentIndex = statusOrder.indexOf(status);
+  
+  // Check if all milestones are released — if so, show "Released" step even if escrow status is "COMPLETED"
+  const allReleased = milestones.length > 0 && milestones.every(m => m.status === "RELEASED");
+  const effectiveStatus = allReleased ? "RELEASED" : status;
+  const currentIndex = statusOrder.indexOf(effectiveStatus);
 
   return (
     <div className="flex items-start gap-0">
       {steps.map((step, i) => {
         const stepIndex = statusOrder.indexOf(step.key);
         const isActive = currentIndex >= stepIndex;
-        const isCurrent = status === step.key || (status === "FUNDING" && step.key === "FUNDED");
+        const isCurrent = effectiveStatus === step.key || (effectiveStatus === "FUNDING" && step.key === "FUNDED");
         
         return (
           <React.Fragment key={step.key}>
