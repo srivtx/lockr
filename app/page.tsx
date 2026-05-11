@@ -102,8 +102,8 @@ export default function LandingPage() {
 
       {/* Hero with video background */}
       <section className="relative z-10 min-h-[100dvh] flex flex-col">
-        {/* Video background */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Video background — desktop only */}
+        <div className="absolute inset-0 z-0 overflow-hidden hidden md:block">
           <iframe
             key={isMuted ? "muted" : "unmuted"}
             src={`https://player.vimeo.com/video/1191304055?background=1&autoplay=1&loop=1&muted=${isMuted ? 1 : 0}&controls=0&badge=0`}
@@ -168,10 +168,10 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Sound toggle */}
+        {/* Sound toggle — desktop only */}
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className="absolute bottom-8 right-8 z-20 flex items-center justify-center w-10 h-10 border border-white/20 hover:border-white/40 bg-black/40 backdrop-blur-sm transition-colors duration-300"
+          className="absolute bottom-8 right-8 z-20 hidden md:flex items-center justify-center w-10 h-10 border border-white/20 hover:border-white/40 bg-black/40 backdrop-blur-sm transition-colors duration-300"
           aria-label={isMuted ? "Unmute video" : "Mute video"}
         >
           {isMuted ? (
@@ -187,6 +187,29 @@ export default function LandingPage() {
             </svg>
           )}
         </button>
+      </section>
+
+      {/* Video section — mobile only */}
+      <section className="relative z-10 block md:hidden bg-black">
+        <div className="mx-auto max-w-5xl px-6 py-16">
+          <div className="max-w-3xl mb-8">
+            <p className="text-sm text-white/40 font-medium tracking-wide uppercase mb-4">Introduction</p>
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+              See LOCKR in action.
+            </h2>
+          </div>
+          <div className="border border-white/[0.08] bg-white/[0.02] p-2">
+            <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+              <iframe
+                src="https://player.vimeo.com/video/1191304055?badge=0&autopause=0&player_id=0&app_id=58479"
+                className="absolute inset-0 w-full h-full"
+                frameBorder="0"
+                allow="autoplay; fullscreen; picture-in-picture"
+                title="LOCKR Demo"
+              />
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* The Journey - Storytelling Section */}
