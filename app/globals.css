@@ -81,8 +81,14 @@
   }
 
   /* Solana Wallet Adapter — Dark Mode Overrides */
-  .wallet-adapter-modal-wrapper {
+  .wallet-adapter-modal,
+  .wallet-adapter-modal-wrapper,
+  .wallet-adapter-modal-container {
     background: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .wallet-adapter-modal-wrapper {
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
   }
@@ -111,8 +117,8 @@
   }
 
   .wallet-adapter-modal-overlay {
-    background: rgba(0, 0, 0, 0.85) !important;
-    backdrop-filter: blur(8px) !important;
+    background: rgba(0, 0, 0, 0.9) !important;
+    backdrop-filter: blur(12px) !important;
   }
 
   .wallet-adapter-modal-button-close {
@@ -179,6 +185,20 @@
 
   .wallet-adapter-modal-list .wallet-adapter-button:last-child {
     border-bottom: none !important;
+  }
+
+  /* Force dark modal — override any inline styles */
+  div[class*="wallet-adapter-modal"] {
+    background-color: #000000 !important;
+  }
+
+  div[class*="wallet-adapter-modal-wrapper"] {
+    background-color: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  }
+
+  div[class*="wallet-adapter-modal-overlay"] {
+    background: rgba(0, 0, 0, 0.9) !important;
   }
 }
 

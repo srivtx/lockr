@@ -5,7 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 
 export default function WalletButton({ className = "" }: { className?: string }) {
-  const { publicKey, wallet, disconnect, connecting, connected } = useWallet();
+  const { publicKey, wallet, disconnect, connecting } = useWallet();
   const { setVisible } = useWalletModal();
   const [copied, setCopied] = useState(false);
   const [active, setActive] = useState(false);
@@ -22,8 +22,8 @@ export default function WalletButton({ className = "" }: { className?: string })
     }
   }, [base64]);
 
-  const openDropdown = useCallback(() => {
-    setActive(true);
+  const toggleDropdown = useCallback(() => {
+    setActive((prev) => !prev);
   }, []);
 
   const closeDropdown = useCallback(() => {
@@ -35,9 +35,15 @@ export default function WalletButton({ className = "" }: { className?: string })
     closeDropdown();
   }, [setVisible, closeDropdown]);
 
-  const handleDisconnect = useCallback(() => {
-    disconnect();
+  const handleDisconnect = useCallback(async () => {
     closeDropdown();
+    // Small delay to let UI update before disconnecting
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    try {
+      await disconnect();
+    } catch (err) {
+      console.error("Disconnect error:", err);
+    }
   }, [disconnect, closeDropdown]);
 
   useEffect(() => {
@@ -54,20 +60,10 @@ export default function WalletButton({ className = "" }: { className?: string })
     };
   }, [closeDropdown]);
 
-  if (!wallet) {
+  if (!wallet || !base64) {
     return (
       <button
-        className={`bg-white text-black text-xs font-medium px-4 py-2 hover:bg-white/90 transition-colors ${className}`}
-        onClick={openModal}
-      >
-        {connecting ? "Connecting..." : "Connect Wallet"}
-      </button>
-    );
-  }
-
-  if (!base64) {
-    return (
-      <button
+        type="button"
         className={`bg-white text-black text-xs font-medium px-4 py-2 hover:bg-white/90 transition-colors ${className}`}
         onClick={openModal}
       >
@@ -79,24 +75,36 @@ export default function WalletButton({ className = "" }: { className?: string })
   return (
     <div className="relative inline-block" ref={ref}>
       <button
+        type="button"
         className={`bg-white text-black text-xs font-medium px-4 py-2 hover:bg-white/90 transition-colors flex items-center gap-2 ${className}`}
-        onClick={openDropdown}
+        onClick={toggleDropdown}
         aria-expanded={active}
         title="Wallet"
       >
         <span>{content}</span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform ${active ? "rotate-180" : ""}`}>
+        <svg 
+          width="12" 
+          height="12" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2.5" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          className={`transition-transform duration-200 ${active ? "rotate-180" : ""}`}
+        >
           <polyline points="6 9 12 15 18 9" />
         </svg>
       </button>
 
       {active && (
-        <div className="absolute right-0 top-full mt-1 w-56 bg-black border border-white/[0.12] shadow-2xl z-50 py-1">
+        <div className="absolute right-0 top-full mt-1.5 w-56 bg-black border border-white/[0.12] shadow-2xl z-[100] py-1">
           <div className="px-4 py-3 border-b border-white/[0.06]">
             <p className="text-xs text-white/40 mb-1">Connected</p>
             <p className="text-sm font-mono text-white/80">{content}</p>
           </div>
           <button
+            type="button"
             className="w-full text-left px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.05] hover:text-white transition-colors flex items-center gap-2"
             onClick={copyAddress}
           >
@@ -107,6 +115,7 @@ export default function WalletButton({ className = "" }: { className?: string })
             {copied ? "Copied!" : "Copy Address"}
           </button>
           <button
+            type="button"
             className="w-full text-left px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.05] hover:text-white transition-colors flex items-center gap-2"
             onClick={openModal}
           >
@@ -120,6 +129,7 @@ export default function WalletButton({ className = "" }: { className?: string })
           </button>
           <div className="border-t border-white/[0.06] mt-1 pt-1">
             <button
+              type="button"
               className="w-full text-left px-4 py-2.5 text-sm text-red-400/80 hover:bg-white/[0.05] hover:text-red-400 transition-colors flex items-center gap-2"
               onClick={handleDisconnect}
             >
