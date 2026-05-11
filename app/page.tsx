@@ -101,7 +101,7 @@ export default function LandingPage() {
       <div className={`transition-all duration-300 ${scrolled ? "h-0" : "h-6"}`} />
 
       {/* Hero with video background */}
-      <section className="relative z-10 min-h-[100dvh] flex flex-col justify-center">
+      <section className="relative z-10 min-h-[90dvh] flex flex-col justify-center mb-20">
         {/* Video background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe
