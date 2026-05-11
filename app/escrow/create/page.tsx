@@ -25,21 +25,59 @@ function getDefaultDeadline(): string {
   return d.toISOString().split("T")[0];
 }
 
-/** Devnet can exceed the default ~30s confirm window; poll until confirmed or timeout. */
+/**
+ * Wait for signature to land. Uses blockhash expiry strategy when provided (recommended).
+ * Otherwise polls status; accepts `processed` on devnet where RPCs can be slow to upgrade status.
+ */
 async function waitForSignatureConfirmation(
   connection: Connection,
   signature: string,
-  timeoutMs = 120_000
+  opts?: {
+    blockhash: string;
+    lastValidBlockHeight: number;
+    timeoutMs?: number;
+  }
 ): Promise<void> {
+  const timeoutMs = opts?.timeoutMs ?? 120_000;
+
+  if (opts) {
+    try {
+      await connection.confirmTransaction(
+        {
+          signature,
+          blockhash: opts.blockhash,
+          lastValidBlockHeight: opts.lastValidBlockHeight,
+        },
+        "confirmed"
+      );
+      return;
+    } catch {
+      // Fall through to polling (some RPCs still flake on confirmTransaction)
+    }
+  }
+
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
-    const status = await connection.getSignatureStatus(signature);
-    const confirmation = status.value?.confirmationStatus;
-    if (confirmation === "confirmed" || confirmation === "finalized") {
+    const { value } = await connection.getSignatureStatuses([signature], {
+      searchTransactionHistory: true,
+    });
+    const st = value[0];
+    const confirmation = st?.confirmationStatus;
+    if (
+      confirmation === "processed" ||
+      confirmation === "confirmed" ||
+      confirmation === "finalized"
+    ) {
       return;
     }
-    if (status.value?.err) {
-      throw new Error(JSON.stringify(status.value.err));
+    if (st?.err) {
+      throw new Error(JSON.stringify(st.err));
+    }
+    const landed = await connection.getTransaction(signature, {
+      maxSupportedTransactionVersion: 0,
+    });
+    if (landed) {
+      return;
     }
     await new Promise((r) => setTimeout(r, 1500));
   }
@@ -140,8 +178,15 @@ export default function CreateEscrowPage() {
         process.env.NEXT_PUBLIC_RPC_URL || "https://api.devnet.solana.com",
         "confirmed"
       );
+      // Refresh blockhash on the client — the server hash may be stale if the user waited before signing.
+      const { blockhash, lastValidBlockHeight } =
+        await connection.getLatestBlockhash("confirmed");
+      tx.recentBlockhash = blockhash;
       const signature = await sendTransaction(tx, connection);
-      await waitForSignatureConfirmation(connection, signature);
+      await waitForSignatureConfirmation(connection, signature, {
+        blockhash,
+        lastValidBlockHeight,
+      });
 
       // 3. Save to database via confirm endpoint
       const confirmRes = await fetch("/api/escrow/confirm", {
