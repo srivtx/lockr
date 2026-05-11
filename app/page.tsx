@@ -45,6 +45,7 @@ function useScrollReveal() {
 export default function LandingPage() {
   const { connected } = useWallet();
   const [scrolled, setScrolled] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   useScrollReveal();
 
   useEffect(() => {
@@ -104,8 +105,9 @@ export default function LandingPage() {
         {/* Video background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe
-            src="https://player.vimeo.com/video/1191304055?background=1&autoplay=1&loop=1&muted=1&controls=0&badge=0"
-            className="absolute w-[177vh] h-[100dvh] min-w-full min-h-[56.25vw] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-cover"
+            key={isMuted ? "muted" : "unmuted"}
+            src={`https://player.vimeo.com/video/1191304055?background=1&autoplay=1&loop=1&muted=${isMuted ? 1 : 0}&controls=0&badge=0`}
+            className="absolute w-[177vh] h-[100dvh] min-w-full min-h-[56.25vw] left-1/2 top-[45%] -translate-x-1/2 -translate-y-1/2 object-cover"
             frameBorder="0"
             allow="autoplay; fullscreen"
             title="LOCKR Background"
@@ -168,6 +170,26 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+
+        {/* Sound toggle */}
+        <button
+          onClick={() => setIsMuted(!isMuted)}
+          className="absolute bottom-8 right-8 z-20 flex items-center justify-center w-10 h-10 border border-white/20 hover:border-white/40 bg-black/40 backdrop-blur-sm transition-colors duration-300"
+          aria-label={isMuted ? "Unmute video" : "Mute video"}
+        >
+          {isMuted ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/50">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <line x1="23" y1="9" x2="17" y2="15" />
+              <line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/80">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+            </svg>
+          )}
+        </button>
       </section>
 
       {/* The Journey - Storytelling Section */}
