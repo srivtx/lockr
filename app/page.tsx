@@ -171,10 +171,10 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Sound toggle */}
+        {/* Sound toggle — fixed to viewport so it stays visible */}
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className="absolute bottom-8 right-8 z-20 flex items-center justify-center w-10 h-10 border border-white/20 hover:border-white/40 bg-black/40 backdrop-blur-sm transition-colors duration-300"
+          className="fixed bottom-8 right-8 z-50 flex items-center justify-center w-10 h-10 border border-white/20 hover:border-white/40 bg-black/40 backdrop-blur-sm transition-colors duration-300"
           aria-label={isMuted ? "Unmute video" : "Mute video"}
         >
           {isMuted ? (
