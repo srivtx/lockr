@@ -174,17 +174,17 @@ export default function LandingPage() {
         {/* Sound toggle */}
         <button
           onClick={() => setIsMuted(!isMuted)}
-          className="absolute bottom-8 right-8 z-20 flex items-center justify-center w-10 h-10 border border-white/20 hover:border-white/40 bg-black/40 backdrop-blur-sm transition-colors duration-300"
+          className="absolute bottom-8 right-8 z-20 flex items-center justify-center w-7 h-7 border border-white/[0.15] hover:border-white/30 bg-black/30 backdrop-blur-sm transition-colors duration-300"
           aria-label={isMuted ? "Unmute video" : "Mute video"}
         >
           {isMuted ? (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/50">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/40">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
               <line x1="23" y1="9" x2="17" y2="15" />
               <line x1="17" y1="9" x2="23" y2="15" />
             </svg>
           ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/80">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/70">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
               <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
             </svg>
