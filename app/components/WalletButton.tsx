@@ -36,22 +36,11 @@ export default function WalletButton({ className = "" }: { className?: string })
   }, [setVisible, closeDropdown]);
 
   const handleDisconnect = useCallback(() => {
-    console.log("[WalletButton] Disconnect clicked");
-    console.log("[WalletButton] disconnect type:", typeof disconnect);
-    console.log("[WalletButton] wallet:", wallet?.adapter?.name);
-    console.log("[WalletButton] publicKey:", publicKey?.toBase58());
-    
-    // Don't close dropdown immediately - let the click finish
-    setTimeout(() => {
-      console.log("[WalletButton] Calling disconnect...");
-      disconnect().then(() => {
-        console.log("[WalletButton] Disconnect resolved");
-      }).catch((err: any) => {
-        console.error("[WalletButton] Disconnect error:", err);
-      });
-      closeDropdown();
-    }, 100);
-  }, [disconnect, closeDropdown, wallet, publicKey]);
+    disconnect().catch(() => {
+      // Silently catch - errors handled by WalletProvider
+    });
+    closeDropdown();
+  }, [disconnect, closeDropdown]);
 
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
@@ -138,12 +127,7 @@ export default function WalletButton({ className = "" }: { className?: string })
             <button
               type="button"
               className="w-full text-left px-4 py-2.5 text-sm text-red-400/80 hover:bg-white/[0.05] hover:text-red-400 transition-colors flex items-center gap-2 cursor-pointer"
-              onMouseDown={(e) => {
-                // Use onMouseDown to fire before dropdown closes
-                e.preventDefault();
-                console.log("[WalletButton] Disconnect mousedown");
-                handleDisconnect();
-              }}
+              onClick={handleDisconnect}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
