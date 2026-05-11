@@ -305,13 +305,19 @@ export default function LandingPage() {
           </div>
           <div className="space-y-4 scroll-reveal">
             {[
-              { name: "Solana", desc: "Fast, cheap settlement layer" },
-              { name: "Dodo Payments", desc: "Fiat on-ramp for clients" },
-              { name: "USDC", desc: "Stable value on-chain" },
-              { name: "Helius", desc: "Reliable RPC infrastructure" },
-              { name: "Supabase", desc: "PostgreSQL database" },
+              { name: "Solana", desc: "Fast, cheap settlement layer", url: "https://solana.com" },
+              { name: "Dodo Payments", desc: "Fiat on-ramp for clients", url: "https://dodopayments.com" },
+              { name: "USDC", desc: "Stable value on-chain", url: "https://www.circle.com/en/usdc" },
+              { name: "Helius", desc: "Reliable RPC infrastructure", url: "https://helius.dev" },
+              { name: "Supabase", desc: "PostgreSQL database", url: "https://supabase.com" },
             ].map((tech) => (
-              <div key={tech.name} className="surface px-6 py-5 flex items-center justify-between group cursor-pointer">
+              <a
+                key={tech.name}
+                href={tech.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="surface px-6 py-5 flex items-center justify-between group cursor-pointer hover:bg-white/[0.03] transition-colors"
+              >
                 <div>
                   <p className="text-sm font-medium">{tech.name}</p>
                   <p className="text-xs text-white/40 mt-0.5">{tech.desc}</p>
@@ -319,7 +325,7 @@ export default function LandingPage() {
                 <span className="text-white/20 group-hover:text-white/50 transition-colors">
                   <ArrowUpRight />
                 </span>
-              </div>
+              </a>
             ))}
           </div>
         </div>
