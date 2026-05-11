@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
+import DodoBanner from "./components/DodoBanner";
 
 function ArrowUpRight() {
   return (
@@ -58,6 +59,8 @@ export default function LandingPage() {
           </Link>
         </div>
       </nav>
+
+      <DodoBanner />
 
       {/* Hero */}
       <section className="relative z-10 mx-auto max-w-5xl px-6 pt-32 pb-24">
