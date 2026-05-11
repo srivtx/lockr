@@ -229,6 +229,9 @@ export async function buildApproveReleaseTx(
   const program = getBackendProgram();
   const kp = getEscrowKeypair();
 
+  // Ensure freelancer has a USDC token account before releasing funds
+  await getOrCreateTokenAccount(USDC_MINT_DEVNET, freelancer, kp);
+
   const escrowTokenAccount = getAssociatedTokenAddressSync(USDC_MINT_DEVNET, escrowPda, true);
   const freelancerTokenAccount = getAssociatedTokenAddressSync(USDC_MINT_DEVNET, freelancer, true);
 
