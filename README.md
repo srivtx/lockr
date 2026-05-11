@@ -98,7 +98,6 @@ lockr/
 │   └── ...                 # Page routes
 ├── src/lib/                # Solana tx builders, Dodo client, Prisma
 ├── prisma/                 # Database schema
-├── docs/                   # Technical documentation
 └── research/               # Hackathon research & references
 ```
 
@@ -150,20 +149,6 @@ The escrow program is deployed on **Solana Devnet**:
 ```
 Program ID: F6PigaZhXTPpb6ao46yr4U4gWBzv5xqKPps7szv6AGyD
 ```
-
----
-
-## Documentation
-
-For detailed technical documentation, see the [`docs/`](./docs) directory:
-
-- [`01-overview.md`](docs/01-overview.md) — Problem statement and system flow
-- [`02-solana-program.md`](docs/02-solana-program.md) — Anchor program design
-- [`03-dodo-integration.md`](docs/03-dodo-integration.md) — Payment processing and webhooks
-- [`04-backend-architecture.md`](docs/04-backend-architecture.md) — API design and workers
-- [`05-frontend-flow.md`](docs/05-frontend-flow.md) — User interface and state management
-- [`06-database-design.md`](docs/06-database-design.md) — Schema and data model
-- [`07-end-to-end-demo.md`](docs/07-end-to-end-demo.md) — Demo script and talking points
 
 ---
 
