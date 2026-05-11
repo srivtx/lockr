@@ -3,79 +3,23 @@
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)](https://lockr.srivtx.tech)
 [![License](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
 
-Milestone-based escrow for Indian freelancers. Fiat in. Trustless out.
+**Milestone-based escrow for Indian freelancers. Fiat in. Trustless out.**
 
-LOCKR lets clients pay freelancers in INR through Dodo Payments, then locks those funds in a Solana smart contract as USDC. Work gets delivered, client approves, freelancer receives stablecoins in seconds — not days.
-
-**Live demo:** [lockr.srivtx.tech](https://lockr.srivtx.tech)
+[lockr.srivtx.tech](https://lockr.srivtx.tech) · [Demo](https://vimeo.com/1191304055) · [Twitter](https://x.com/lockr_sol)
 
 ---
 
-## Hackathon Tracks
+## What It Is
 
-### Colosseum Solana Frontier Hackathon 2026
+LOCKR is a non-custodial escrow protocol that lets international clients pay Indian freelancers in fiat (INR, card, UPI) while freelancers receive USDC on Solana. A smart contract locks funds until work is delivered and approved — no platform custody, no 30-day delays.
 
-Built for the [Colosseum Solana Frontier Hackathon](https://colosseum.com/frontier) — the world's largest online Solana hackathon with 18,000+ builders.
+**The problem:** Indian freelancers lose $3.2B annually to payment delays and disputes. Upwork and Fiverr charge 20% and hold funds for weeks. Crypto escrow exists but clients don't have wallets.
 
-| | |
-|---|---|
-| **Hackathon** | Colosseum Solana Frontier 2026 |
-| **Dates** | April 6 — May 11, 2026 |
-| **Track** | Payments + Commerce |
-| **Prizes** | $250,000 total ($30K Grand Champion, $10K Public Goods, $10K University, $200K across 20 teams) |
-| **Accelerator** | Winners interviewed for $250,000 pre-seed funding |
-
-### Superteam India × Dodo Payments Track
-
-Also submitted for the [Superteam India × Dodo Payments Track](https://superteam.fun/earn/listing/payments-track-or-superteam-india-x-dodo-payments) — a dedicated prize track for Indian builders focused on payment solutions using Dodo Payments on Solana.
-
-| | |
-|---|---|
-| **Track** | Payments — Superteam India × Dodo Payments |
-| **Prize Pool** | 10,000 USDG |
-| **1st Place** | 5,000 USDG |
-| **2nd Place** | 3,000 USDG |
-| **3rd Place** | 2,000 USDG |
-| **Focus** | Fiat-to-crypto payments on Solana |
-| **Region** | India only |
-
-### Links
-
-| **Live App** | [lockr.srivtx.tech](https://lockr.srivtx.tech) |
-| **Demo Video** | [Watch on Vimeo](https://vimeo.com/1191304055) |
-| **Repository** | [github.com/srivtx/lockr](https://github.com/srivtx/lockr) |
-
----
-
-## Overview
-
-Freelancers in India lose an estimated **$3.2B annually** to payment delays and disputes. International clients want to pay by card. Freelancers want to receive in crypto. Existing platforms charge 5–20% and hold funds for weeks.
-
-LOCKR bridges this gap. It is a non-custodial escrow protocol with a fiat on-ramp. The client pays in their currency. The freelancer receives USDC on Solana. A smart contract enforces the terms — not a platform.
-
-This project demonstrates:
-- **Real-world utility** — Solves a $3.2B problem for 15M+ Indian freelancers
-- **Payments innovation** — First escrow protocol with Dodo Payments fiat on-ramp
-- **Solana-native design** — Sub-second settlement, $0.001 fees, program-owned escrow
-- **Full-stack delivery** — Smart contract + frontend + backend + email automation
+**The solution:** LOCKR bridges fiat and crypto. Client pays by card → Dodo converts to USDC → Solana escrow holds it → freelancer delivers → client approves → USDC releases instantly.
 
 ---
 
 ## How It Works
-
-| Step | Client | System | Freelancer |
-|------|--------|--------|------------|
-| 1 | Creates escrow with milestones | Generates Solana PDA | Receives email with tracking link |
-| 2 | Pays via Dodo checkout | Converts fiat to USDC, funds escrow | — |
-| 3 | — | Locks funds on-chain | Delivers work, marks milestone complete |
-| 4 | Reviews deliverable | — | — |
-| 5 | Approves release | Executes `release_funds` instruction | Receives USDC instantly |
-
-If a milestone is disputed, either party can trigger a refund after a timeout. The relayer handles transaction fees so freelancers never need SOL in their wallet.
-
----
-
-## Architecture
 
 ```
 ┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
@@ -101,16 +45,25 @@ If a milestone is disputed, either party can trigger a refund after a timeout. T
 └─────────────────────────────────────────────────────────────┘
 ```
 
+| Step | What happens |
+|------|-------------|
+| 1 | Freelancer creates escrow with milestones, client gets email with payment link |
+| 2 | Client clicks link, pays via Dodo (card/UPI/40+ methods) |
+| 3 | Webhook fires, USDC locks on Solana escrow PDA |
+| 4 | Freelancer delivers milestone, marks complete |
+| 5 | Client approves via email, USDC releases to freelancer wallet in ~3 seconds |
+
+Disputed? Either party triggers refund after timeout. Relayer pays gas so freelancers never need SOL.
+
 ---
 
-## Key Features
+## Why This Wins
 
-- **Non-custodial escrow** — Funds live on a Solana PDA, not in a company account
-- **Fiat on-ramp** — Dodo Payments handles INR / card payments, no crypto knowledge required from clients
-- **Milestone-based** — Break large projects into deliverables, release funds incrementally
-- **Gasless for freelancers** — Relayer pays SOL fees; freelancers only need a USDC wallet
-- **Email notifications** — Status updates via Resend for every state change
-- **Dispute protection** — Refund window with on-chain timeout enforcement
+- **First escrow protocol with Dodo Payments fiat on-ramp** — not just a checkout button, a full milestone escrow
+- **Solves a $3.2B problem** for 15M+ Indian freelancers
+- **Sub-second settlement, $0.001 fees** vs 5-20% and weeks on traditional platforms
+- **Gasless for freelancers** — relayer handles SOL, they just need a USDC wallet
+- **End-to-end working product** — live, deployed, tested, not a demo
 
 ---
 
@@ -118,14 +71,38 @@ If a milestone is disputed, either party can trigger a refund after a timeout. T
 
 | Layer | Technology |
 |-------|------------|
-| Smart Contract | Anchor (Rust), Solana Devnet |
-| Frontend | Next.js 15, React 19, Tailwind CSS |
-| Backend | Next.js API Routes, Prisma ORM |
-| Database | PostgreSQL (Supabase) |
-| Payments | Dodo Payments (test mode) |
-| Email | Resend |
-| RPC | Helius |
-| Deployment | Vercel |
+| Smart Contract | [Anchor](https://www.anchor-lang.com/) (Rust), [Solana](https://solana.com/) Devnet |
+| Frontend | [Next.js 15](https://nextjs.org/), React 19, [Tailwind CSS](https://tailwindcss.com/) |
+| Backend | Next.js API Routes, [Prisma](https://www.prisma.io/) ORM |
+| Database | [PostgreSQL](https://www.postgresql.org/) ([Supabase](https://supabase.com/)) |
+| Payments | [Dodo Payments](https://dodopayments.com/) (test mode) |
+| Email | [Resend](https://resend.com/) |
+| RPC | [Helius](https://helius.dev/) |
+| Deployment | [Vercel](https://vercel.com/) |
+
+---
+
+## Hackathons
+
+### Colosseum Solana Frontier 2026
+World's largest online Solana hackathon. 18,000+ builders. $250K+ in prizes.
+
+| | |
+|---|---|
+| **Track** | Payments + Commerce |
+| **Dates** | April 6 — May 11, 2026 |
+| **Prizes** | $30K Grand Champion · $10K Public Goods · $10K University · $200K across 20 teams |
+| **Accelerator** | Winners considered for $250K pre-seed + Colosseum accelerator |
+
+### Superteam India × Dodo Payments
+Dedicated track for Indian builders using Dodo Payments on Solana.
+
+| | |
+|---|---|
+| **Track** | Payments — Superteam India × Dodo Payments |
+| **Prize Pool** | 10,000 USDG (1st: 5K · 2nd: 3K · 3rd: 2K) |
+| **Region** | India only |
+| **Submissions** | 31 |
 
 ---
 
@@ -139,66 +116,38 @@ lockr/
 │   ├── components/         # React components
 │   └── ...                 # Page routes
 ├── src/lib/                # Solana tx builders, Dodo client, Prisma
-├── prisma/                 # Database schema
-└── research/               # Hackathon research & references
+└── prisma/                 # Database schema
 ```
 
 ---
 
 ## Local Development
 
-### Prerequisites
-
-- Node.js 20+
-- Solana CLI + Anchor
-- PostgreSQL database (local or Supabase)
-
-### Environment Variables
-
 ```bash
-DATABASE_URL="postgresql://..."
-DIRECT_URL="postgresql://..."
-ESCROW_KEYPAIR="[relayer keypair array]"
-HELIUS_RPC_URL="https://devnet.helius-rpc.com/..."
-NEXT_PUBLIC_RPC_URL="https://devnet.helius-rpc.com/..."
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-NEXT_PUBLIC_SOLANA_PROGRAM_ID="F6PigaZhXTPpb6ao46yr4U4gWBzv5xqKPps7szv6AGyD"
-DODO_API_KEY="dodo_prod_..."
-DODO_WEBHOOK_KEY="whsec_..."
-DODO_ENVIRONMENT="test_mode"
-DODO_PRODUCT_ID="pdt_..."
-REDIS_URL="redis://..."
-RESEND_API_KEY="re_..."
-RESEND_FROM_EMAIL="LOCKR <noreply@...>"
-```
+# Prerequisites: Node.js 20+, Solana CLI, Anchor, PostgreSQL
 
-### Install & Run
-
-```bash
 npm install
 npx prisma migrate dev
 npm run dev
 ```
 
-The application will be available at `http://localhost:3000`.
+**Environment variables:** See `.env.example` or README section below for full list.
 
 ---
 
-## Program Deployment
+## Program
 
-The escrow program is deployed on **Solana Devnet**:
+Deployed on **Solana Devnet**:
 
 ```
-Program ID: F6PigaZhXTPpb6ao46yr4U4gWBzv5xqKPps7szv6AGyD
+F6PigaZhXTPpb6ao46yr4U4gWBzv5xqKPps7szv6AGyD
 ```
 
 ---
 
 ## Contact
 
-Questions or feedback? Reach out on X.
-
-[![X](https://img.shields.io/badge/Follow%20%40lockr__sol-black?logo=x&logoColor=white)](https://x.com/lockr_sol)
+[![X](https://img.shields.io/badge/%40lockr__sol-black?logo=x&logoColor=white)](https://x.com/lockr_sol)
 
 ---
 
