@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useWallet } from "@solana/wallet-adapter-react";
 import DodoBanner from "./components/DodoBanner";
@@ -22,26 +22,49 @@ function Check() {
   );
 }
 
+// Scroll reveal hook
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    document.querySelectorAll(".scroll-reveal").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+}
+
 export default function LandingPage() {
   const { connected } = useWallet();
   const [scrolled, setScrolled] = useState(false);
+  useScrollReveal();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Film grain noise overlay */}
+      <div className="noise-overlay" />
+      
       {/* Grid background - fades at top */}
       <div className="absolute inset-0 grid-pattern opacity-50 pointer-events-none" 
            style={{ maskImage: 'linear-gradient(to bottom, transparent 0%, black 20%)', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 20%)' }} />
       
-      {/* Subtle radial glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-white/[0.02] rounded-full blur-[150px] pointer-events-none" />
+      {/* Stronger radial glow behind hero */}
+      <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[1000px] h-[700px] bg-white/[0.025] rounded-full blur-[180px] pointer-events-none" />
+      <div className="absolute top-[5%] left-1/3 w-[600px] h-[400px] bg-white/[0.015] rounded-full blur-[150px] pointer-events-none" />
 
       {/* Sticky Navbar */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -82,7 +105,7 @@ export default function LandingPage() {
           <p className="fade-in text-sm text-white/40 font-medium tracking-wide uppercase mb-6">
             Solana Frontier Hackathon
           </p>
-          <h1 className="fade-in delay-100 text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.1] text-gradient">
+          <h1 className="fade-in delay-100 text-6xl sm:text-7xl lg:text-[88px] font-semibold tracking-tight leading-[1.05] text-gradient">
             Get paid for every milestone.
           </h1>
           <p className="fade-in delay-200 mt-8 text-lg sm:text-xl text-white/50 leading-relaxed max-w-xl">
@@ -129,7 +152,7 @@ export default function LandingPage() {
       {/* The Journey - Storytelling Section */}
       <section className="relative z-10 border-y border-white/[0.06]">
         <div className="mx-auto max-w-5xl px-6 py-32">
-          <div className="max-w-2xl mb-20">
+          <div className="max-w-2xl mb-20 scroll-reveal">
             <p className="text-sm text-white/40 font-medium tracking-wide uppercase mb-4">How it works</p>
             <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
               Four steps. Zero trust required.
@@ -162,8 +185,8 @@ export default function LandingPage() {
                 desc: "They click the email link and approve. USDC releases to your wallet. No intermediaries. No delays.",
                 details: ["Email-based approval", "On-chain release", "Seconds to settle"],
               },
-            ].map((step, i) => (
-              <div key={step.num} className="bg-black p-8 sm:p-12 group hover:bg-white/[0.02] transition-colors duration-500">
+            ].map((step) => (
+              <div key={step.num} className="bg-black p-8 sm:p-12 group hover:bg-white/[0.02] transition-colors duration-500 scroll-reveal">
                 <div className="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-16">
                   <div className="flex items-center gap-4 lg:w-48 shrink-0">
                     <span className="text-4xl font-semibold text-white/10 group-hover:text-white/20 transition-colors duration-500">
@@ -192,7 +215,7 @@ export default function LandingPage() {
       {/* Architecture / Why Solana */}
       <section className="relative z-10 mx-auto max-w-5xl px-6 py-32">
         <div className="grid lg:grid-cols-2 gap-16">
-          <div>
+          <div className="scroll-reveal">
             <p className="text-sm text-white/40 font-medium tracking-wide uppercase mb-4">Why Solana</p>
             <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-6">
               Built for speed.
@@ -217,7 +240,7 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 scroll-reveal">
             {[
               { name: "Solana", desc: "Fast, cheap settlement layer" },
               { name: "Dodo Payments", desc: "Fiat on-ramp for clients" },
@@ -241,7 +264,7 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="relative z-10 border-t border-white/[0.06]">
-        <div className="mx-auto max-w-5xl px-6 py-32 text-center">
+        <div className="mx-auto max-w-5xl px-6 py-32 text-center scroll-reveal">
           <h2 className="text-4xl sm:text-5xl font-semibold tracking-tight text-gradient">
             Stop chasing invoices.
           </h2>
