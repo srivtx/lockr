@@ -101,7 +101,7 @@ export default function LandingPage() {
       <div className={`transition-all duration-300 ${scrolled ? "h-0" : "h-6"}`} />
 
       {/* Hero with video background */}
-      <section className="relative z-10 min-h-[100dvh] flex flex-col justify-center">
+      <section className="relative z-10 min-h-[100dvh] flex flex-col">
         {/* Video background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe
@@ -112,17 +112,12 @@ export default function LandingPage() {
             allow="autoplay; fullscreen"
             title="LOCKR Background"
           />
-          {/* Dark overlay for readability */}
           <div className="absolute inset-0 bg-black/60" />
-          {/* Bottom fade to black for seamless transition */}
-          <div 
-            className="absolute bottom-0 left-0 right-0 h-48"
-            style={{ background: 'linear-gradient(to bottom, transparent, black)' }}
-          />
+          <div className="absolute bottom-0 left-0 right-0 h-48" style={{ background: 'linear-gradient(to bottom, transparent, black)' }} />
         </div>
 
-        {/* Hero content */}
-        <div className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-24">
+        {/* Hero text — vertically centered */}
+        <div className="relative z-10 flex-1 flex flex-col justify-center mx-auto max-w-5xl w-full px-6 pt-32 pb-16">
           <div className="max-w-3xl">
             <p className="fade-in text-sm text-white/40 font-medium tracking-wide uppercase mb-6">
               Solana Frontier Hackathon
@@ -131,7 +126,7 @@ export default function LandingPage() {
               Get paid for every milestone.
             </h1>
             <p className="fade-in delay-200 mt-8 text-lg sm:text-xl text-white/50 leading-relaxed max-w-xl">
-              Your client pays in fiat. Funds lock on-chain as USDC. 
+              Your client pays in fiat. Funds lock on-chain as USDC.
               You deliver work. Client approves. Money hits your wallet in seconds.
             </p>
             <div className="fade-in delay-300 mt-10 flex items-center gap-6">
@@ -155,9 +150,11 @@ export default function LandingPage() {
               </a>
             </div>
           </div>
+        </div>
 
-          {/* Stats bar */}
-          <div className="fade-in delay-400 mt-32 grid grid-cols-3 gap-px bg-white/[0.06] backdrop-blur-sm">
+        {/* Stats bar — pinned to bottom */}
+        <div className="relative z-10 mx-auto max-w-5xl w-full px-6 pb-16">
+          <div className="fade-in delay-400 grid grid-cols-3 gap-px bg-white/[0.06] backdrop-blur-sm">
             {[
               { value: "3s", label: "Settlement time" },
               { value: "$0.001", label: "Transaction cost" },
