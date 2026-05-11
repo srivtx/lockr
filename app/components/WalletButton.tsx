@@ -76,7 +76,7 @@ export default function WalletButton({ className = "" }: { className?: string })
     <div className="relative inline-block" ref={ref}>
       <button
         type="button"
-        className={`bg-white text-black text-xs font-medium px-4 py-2 hover:bg-white/90 transition-colors flex items-center gap-2 ${className}`}
+        className={`bg-white text-black text-xs font-medium px-4 py-2 hover:bg-white/90 transition-colors flex items-center gap-2 cursor-pointer ${className}`}
         onClick={toggleDropdown}
         aria-expanded={active}
         title="Wallet"
@@ -98,14 +98,14 @@ export default function WalletButton({ className = "" }: { className?: string })
       </button>
 
       {active && (
-        <div className="absolute right-0 top-full mt-1.5 w-56 bg-black border border-white/[0.12] shadow-2xl z-[100] py-1">
+        <div className="absolute right-0 top-full mt-1.5 w-56 bg-black border border-white/[0.12] shadow-2xl z-[100] py-1 backdrop-blur-none">
           <div className="px-4 py-3 border-b border-white/[0.06]">
             <p className="text-xs text-white/40 mb-1">Connected</p>
             <p className="text-sm font-mono text-white/80">{content}</p>
           </div>
           <button
             type="button"
-            className="w-full text-left px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.05] hover:text-white transition-colors flex items-center gap-2"
+            className="w-full text-left px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.05] hover:text-white transition-colors flex items-center gap-2 cursor-pointer"
             onClick={copyAddress}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -116,7 +116,7 @@ export default function WalletButton({ className = "" }: { className?: string })
           </button>
           <button
             type="button"
-            className="w-full text-left px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.05] hover:text-white transition-colors flex items-center gap-2"
+            className="w-full text-left px-4 py-2.5 text-sm text-white/70 hover:bg-white/[0.05] hover:text-white transition-colors flex items-center gap-2 cursor-pointer"
             onClick={openModal}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -130,7 +130,7 @@ export default function WalletButton({ className = "" }: { className?: string })
           <div className="border-t border-white/[0.06] mt-1 pt-1">
             <button
               type="button"
-              className="w-full text-left px-4 py-2.5 text-sm text-red-400/80 hover:bg-white/[0.05] hover:text-red-400 transition-colors flex items-center gap-2"
+              className="w-full text-left px-4 py-2.5 text-sm text-red-400/80 hover:bg-white/[0.05] hover:text-red-400 transition-colors flex items-center gap-2 cursor-pointer"
               onClick={handleDisconnect}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

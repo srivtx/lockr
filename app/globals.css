@@ -194,11 +194,17 @@
 
   div[class*="wallet-adapter-modal-wrapper"] {
     background-color: #000000 !important;
+    background: #000000 !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
   }
 
   div[class*="wallet-adapter-modal-overlay"] {
-    background: rgba(0, 0, 0, 0.9) !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: blur(12px) !important;
+  }
+
+  div[class*="wallet-adapter-modal-container"] {
+    background: transparent !important;
   }
 }
 
