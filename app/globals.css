@@ -30,6 +30,31 @@
     color: #fff;
   }
 
+  input, textarea, select {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0;
+    padding: 10px 14px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+    width: 100%;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.5;
+  }
+
   /* Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
