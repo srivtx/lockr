@@ -25,6 +25,29 @@ function getDefaultDeadline(): string {
   return d.toISOString().split("T")[0];
 }
 
+/** Devnet can exceed the default ~30s confirm window; poll until confirmed or timeout. */
+async function waitForSignatureConfirmation(
+  connection: Connection,
+  signature: string,
+  timeoutMs = 120_000
+): Promise<void> {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const status = await connection.getSignatureStatus(signature);
+    const confirmation = status.value?.confirmationStatus;
+    if (confirmation === "confirmed" || confirmation === "finalized") {
+      return;
+    }
+    if (status.value?.err) {
+      throw new Error(JSON.stringify(status.value.err));
+    }
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+  throw new Error(
+    `Transaction was not confirmed in ${timeoutMs / 1000}s. Check signature ${signature} on Solana Explorer.`
+  );
+}
+
 export default function CreateEscrowPage() {
   const router = useRouter();
   const { publicKey, connected, sendTransaction } = useWallet();
@@ -118,7 +141,7 @@ export default function CreateEscrowPage() {
         "confirmed"
       );
       const signature = await sendTransaction(tx, connection);
-      await connection.confirmTransaction(signature, "confirmed");
+      await waitForSignatureConfirmation(connection, signature);
 
       // 3. Save to database via confirm endpoint
       const confirmRes = await fetch("/api/escrow/confirm", {
