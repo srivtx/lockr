@@ -38,12 +38,22 @@
     color: #fff;
     font-size: 14px;
     outline: none;
+    box-shadow: none;
+    -webkit-focus-ring-color: transparent;
     transition: border-color 0.2s ease;
     width: 100%;
   }
 
   input:focus, textarea:focus, select:focus {
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.4);
+    outline: none;
+    box-shadow: none;
+    -webkit-focus-ring-color: transparent;
+  }
+
+  input:focus-visible, textarea:focus-visible, select:focus-visible {
+    outline: none;
+    box-shadow: none;
   }
 
   input::placeholder, textarea::placeholder {
