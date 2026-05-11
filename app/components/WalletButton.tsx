@@ -35,16 +35,23 @@ export default function WalletButton({ className = "" }: { className?: string })
     closeDropdown();
   }, [setVisible, closeDropdown]);
 
-  const handleDisconnect = useCallback(async () => {
-    closeDropdown();
-    // Small delay to let UI update before disconnecting
-    await new Promise((resolve) => setTimeout(resolve, 50));
-    try {
-      await disconnect();
-    } catch (err) {
-      console.error("Disconnect error:", err);
-    }
-  }, [disconnect, closeDropdown]);
+  const handleDisconnect = useCallback(() => {
+    console.log("[WalletButton] Disconnect clicked");
+    console.log("[WalletButton] disconnect type:", typeof disconnect);
+    console.log("[WalletButton] wallet:", wallet?.adapter?.name);
+    console.log("[WalletButton] publicKey:", publicKey?.toBase58());
+    
+    // Don't close dropdown immediately - let the click finish
+    setTimeout(() => {
+      console.log("[WalletButton] Calling disconnect...");
+      disconnect().then(() => {
+        console.log("[WalletButton] Disconnect resolved");
+      }).catch((err: any) => {
+        console.error("[WalletButton] Disconnect error:", err);
+      });
+      closeDropdown();
+    }, 100);
+  }, [disconnect, closeDropdown, wallet, publicKey]);
 
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
@@ -64,7 +71,7 @@ export default function WalletButton({ className = "" }: { className?: string })
     return (
       <button
         type="button"
-        className={`bg-white text-black text-xs font-medium px-4 py-2 hover:bg-white/90 transition-colors ${className}`}
+        className={`bg-white text-black text-xs font-medium px-4 py-2 hover:bg-white/90 transition-colors cursor-pointer ${className}`}
         onClick={openModal}
       >
         {connecting ? "Connecting..." : "Connect Wallet"}
@@ -98,7 +105,7 @@ export default function WalletButton({ className = "" }: { className?: string })
       </button>
 
       {active && (
-        <div className="absolute right-0 top-full mt-1.5 w-56 bg-black border border-white/[0.12] shadow-2xl z-[100] py-1 backdrop-blur-none">
+        <div className="absolute right-0 top-full mt-1.5 w-56 bg-black border border-white/[0.12] shadow-2xl z-[100] py-1">
           <div className="px-4 py-3 border-b border-white/[0.06]">
             <p className="text-xs text-white/40 mb-1">Connected</p>
             <p className="text-sm font-mono text-white/80">{content}</p>
@@ -131,7 +138,12 @@ export default function WalletButton({ className = "" }: { className?: string })
             <button
               type="button"
               className="w-full text-left px-4 py-2.5 text-sm text-red-400/80 hover:bg-white/[0.05] hover:text-red-400 transition-colors flex items-center gap-2 cursor-pointer"
-              onClick={handleDisconnect}
+              onMouseDown={(e) => {
+                // Use onMouseDown to fire before dropdown closes
+                e.preventDefault();
+                console.log("[WalletButton] Disconnect mousedown");
+                handleDisconnect();
+              }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
