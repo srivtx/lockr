@@ -5,7 +5,7 @@
 
 **Milestone-based escrow for Indian freelancers. Fiat in. Trustless out.**
 
-[lockr.srivtx.tech](https://lockr.srivtx.tech) · [Demo](https://vimeo.com/1191304055) · [Twitter](https://x.com/lockr_sol)
+[lockr.srivtx.tech](https://lockr.srivtx.tech) · [Demo](https://www.loom.com/share/54841636b5db4b7e9f19be23dbdee62d) · [Intro](https://vimeo.com/1191304055) · [Twitter](https://x.com/lockr_sol)
 
 ---
 
